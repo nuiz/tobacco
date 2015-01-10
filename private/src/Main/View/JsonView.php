@@ -17,7 +17,7 @@ class JsonView extends BaseView {
             'connection_close'=> true
         ];
         $this->options = array_merge($default, $options);
-        $this->$val = $val;
+        $this->val = $val;
     }
 
     public function render()

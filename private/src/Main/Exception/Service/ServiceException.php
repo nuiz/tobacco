@@ -22,5 +22,6 @@ class ServiceException extends \Exception {
 
     public function __construct($response){
         $this->response = $response;
+        $this->message = json_encode($response);
     }
 } 

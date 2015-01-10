@@ -27,13 +27,15 @@ class MedooFactory {
             self::$instances[$name] = new \medoo([
                 // required
                 'database_type' => AppConfig::get($paramPath.'.database_type'),
-                'database_name' => $paramPath.'.database_name',
-                'server' => $paramPath.'.server',
-                'username' => $paramPath.'.username',
-                'password' => $paramPath.'.password',
-                'port' => $paramPath.'.port',
-                'charset' => $paramPath.'.charset',
-                'option' => $paramPath.'.option'
+                'database_name' => AppConfig::get($paramPath.'.database_name'),
+                'server' => AppConfig::get($paramPath.'.server'),
+                'username' => AppConfig::get($paramPath.'.username'),
+                'password' => AppConfig::get($paramPath.'.password'),
+                'port' => AppConfig::get($paramPath.'.port'),
+                'charset' => AppConfig::get($paramPath.'.charset'),
+                'option' => [
+                    \PDO::ATTR_CASE => \PDO::CASE_NATURAL
+                ]
             ]);
         }
         return self::$instances[$name];

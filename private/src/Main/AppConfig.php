@@ -13,12 +13,11 @@ Class AppConfig {
 
     static public $setting = null;
 
-    public static function get ($name) {
+    public static function get($name) {
         if (is_null(self::$setting)) {
-            self::$setting = include("private/AppConfig.php");
+            self::$setting = include(dirname(__FILE__)."/../../AppConfig.php");
             self::$setting = ArrayHelper::ArrayGetPath(self::$setting);
         }
         return self::$setting[$name];
     }
-
 }

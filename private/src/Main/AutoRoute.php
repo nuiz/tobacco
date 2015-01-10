@@ -50,7 +50,7 @@ class AutoRoute {
         $router = new \AltoRouter();
 
         if($_SERVER['HTTP_HOST']== 'localhost'){
-            $router->setBasePath('/tobacco_factory');
+            $router->setBasePath('/tobacco');
         }
         $ctls = self::readCTL();
         foreach($ctls as $ctl){
