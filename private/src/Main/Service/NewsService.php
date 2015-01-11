@@ -44,7 +44,7 @@ class NewsService extends BaseService {
         $id = $masterDB->insert($this->table, $insertParams);
 
         // get news data
-        $item = $masterDB->select($this->table, '*', ['id'=> $id, "LIMIT"]);
+        $item = $masterDB->select($this->table, '*', ['id'=> $id, "LIMIT"=> 1]);
 
         return $item[0];
     }
@@ -52,7 +52,7 @@ class NewsService extends BaseService {
     public function gets($options = array(), Context $ctx){
         $default = array(
             "page"=> 1,
-            "limit"=> 15
+            "limit"=> 100
         );
         $options = array_merge($default, $options);
         $skip = ($options['page']-1)*$options['limit'];

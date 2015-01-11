@@ -1189,5 +1189,49 @@
             "testing",
             "xunit"
         ]
+    },
+    {
+        "name": "imagecow/imagecow",
+        "version": "v1.2.0",
+        "version_normalized": "1.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/oscarotero/imagecow.git",
+            "reference": "381d8f184ab5bccc894fd93497429e1df1c12754"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/oscarotero/imagecow/zipball/381d8f184ab5bccc894fd93497429e1df1c12754",
+            "reference": "381d8f184ab5bccc894fd93497429e1df1c12754",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2014-12-29 15:01:10",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Imagecow\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Oscar Otero",
+                "email": "oom@oscarotero.com",
+                "homepage": "http://oscarotero.com",
+                "role": "Developer"
+            }
+        ],
+        "description": "PHP library to manipulate and generate responsive images",
+        "homepage": "https://github.com/oscarotero/imagecow/",
+        "keywords": [
+            "image"
+        ]
     }
 ]

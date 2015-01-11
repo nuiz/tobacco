@@ -6,5 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Imagecow\\' => array($vendorDir . '/imagecow/imagecow/src'),
     'DocBlock\\' => array($vendorDir . '/dannykopping/docblock/DocBlock'),
 );
