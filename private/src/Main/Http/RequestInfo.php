@@ -32,6 +32,7 @@ class RequestInfo {
         $ctType = isset($_SERVER['CONTENT_TYPE'])? $_SERVER['CONTENT_TYPE']: null;
         $method = isset($_SERVER['REQUEST_METHOD'])? $_SERVER['REQUEST_METHOD']: 'GET';
 
+        $files = array();
         if($ctType=='application/json'){
             $jsonText = file_get_contents('php://input');
             $params = json_decode($jsonText, true);
@@ -39,10 +40,18 @@ class RequestInfo {
         }
         else if($method=='POST'){
             $params = $_POST;
+            $files = $_FILES;
         }
         else if($method=='PUT' || $method == 'DELETE'){
             $put = array();
-            parse_str(file_get_contents("php://input"), $put);
+            if($ctType=='application/x-www-form-urlencoded'){
+                parse_str(file_get_contents("php://input"), $put);
+            }
+            else {
+                $parse = ParseInput::multiPartFormData(file_get_contents('php://input'));
+                $params = $parse['data'];
+                $files = $parse['files'];
+            }
             $params = $put;
         }
         else {
@@ -56,7 +65,7 @@ class RequestInfo {
             $url_params = array();
         }
 
-        return new self($method, $_GET, $params, $_FILES, $url_params);
+        return new self($method, $_GET, $params, $files, $url_params);
     }
 
     public function params()
