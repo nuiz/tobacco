@@ -89,7 +89,6 @@ class AccountService extends BaseService {
     public function get($id){
         $db = MedooFactory::getInstance();
         $items = $db->select($this->table, '*', ['accId'=> $id, 'LIMIT'=> 1]);
-        return $items;
         if(isset($items[0])){
             $item = $items[0];
             $item['registerDate'] = strtotime($item['registerDate']);
