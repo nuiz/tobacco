@@ -49,8 +49,9 @@ class AutoRoute {
     public static function mapAllCTL(){
         $router = new \AltoRouter();
 
-        if($_SERVER['HTTP_HOST']== 'localhost'){
-            $router->setBasePath('/tobacco');
+        $basePath = AppConfig::get("route.base_path");
+        if(!is_null($basePath) && trim($basePath) != ""){
+            $router->setBasePath($basePath);
         }
         $ctls = self::readCTL();
         foreach($ctls as $ctl){

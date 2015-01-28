@@ -17,6 +17,9 @@ $configs = array(
         "directory" => dirname(__FILE__),
         "view" => "default"
     ),
+    "route"=> array(
+        "base_path"=> "/tobacco"
+    ),
     "db" => array(
         "mongodb" => array(
             "host" => "localhost",

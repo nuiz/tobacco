@@ -44,13 +44,13 @@ class RequestInfo {
         }
         else if($method=='PUT' || $method == 'DELETE'){
             $put = array();
-            if($ctType=='application/x-www-form-urlencoded'){
-                parse_str(file_get_contents("php://input"), $put);
+            if($ctType=='multipart/form-data'){
+                $parse = ParseInput::multiPartFormData(file_get_contents('php://input'));
+                $put = $parse['data'];
+                $files = $parse['files'];
             }
             else {
-                $parse = ParseInput::multiPartFormData(file_get_contents('php://input'));
-                $params = $parse['data'];
-                $files = $parse['files'];
+                parse_str(file_get_contents("php://input"), $put);
             }
             $params = $put;
         }
