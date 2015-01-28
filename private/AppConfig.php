@@ -33,7 +33,7 @@ $configs = array(
         "medoo" => array(
             "master"=> array(
                 "database_type"=> "mysql",
-                "database_name" => "tobacco_factory",
+                "database_name" => "tobacco",
                 "server" => "localhost",
                 "username" => 'root',
                 'password' => '111111',
@@ -53,6 +53,11 @@ $configs = array(
             "distribution_file" => "",
             "distribution_link" => ""
         )
+    ),
+    "log"=> array(
+        "error"=> dirname(__FILE__)."/log/error.log",
+        "info"=> dirname(__FILE__)."/log/info.log",
+        "warning"=> dirname(__FILE__)."/log/warning.log"
     ),
     "android" => array(
         "key" => ""

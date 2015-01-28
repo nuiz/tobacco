@@ -31,7 +31,6 @@ class AccountService extends BaseService {
         $v->rule('in', 'level', ['user', 'admin']);
 
         if(!$v->validate()){
-            error_log(print_r($v->errors(), true));
             throw new AccountServiceException();
         }
 
@@ -77,37 +76,72 @@ class AccountService extends BaseService {
             'share'=> 'yes',
             'comment'=> 'yes'
         ];
-
         $permissionAccId = $db->insert($this->permissionTable, $permissionAccountInsert);
-//        if($accDetailId == 0){
-//            throw new AccountServiceException();
-//        }
 
         return $accId;
     }
 
     public function get($id){
         $db = MedooFactory::getInstance();
-        $items = $db->select($this->table, '*', ['accId'=> $id, 'LIMIT'=> 1]);
-        if(isset($items[0])){
-            $item = $items[0];
-            $item['registerDate'] = strtotime($item['registerDate']);
-            return $item;
-        }
-        else {
-            return null;
-        }
+        $item = $db->get($this->table,
+            ["[>]".$this->detailTable => ['accId', 'accId']],
+            '*',
+            [$this->table.'.accId'=> $id]);
+
+        return $item;
     }
 
-    public function update(){
+    public function updateDetail($id, $params){
 
+        $paramUpdate = ArrayHelper::filterKey(['name', 'lastname', 'email', 'phone', 'mobile', 'picture', 'introduced', 'history'], $params);
+        if(count($paramUpdate) == 0){
+            return $this->get($id);
+        }
+
+        $db = MedooFactory::getInstance();
+        $count = $db->count($this->table, ["accId"=> $id]);
+        if($count == 0){
+            return $this->get($id);
+        }
+
+        $db->update($this->table, $paramUpdate, ["accId"=> $id]);
+        return $this->get($id);
     }
 
     public function delete($id){
-
+        $db = MedooFactory::getInstance();
+        return $db->delete($this->table, ["accId"=> $id])
+            && $db->delete($this->detailTable, ["accId"=> $id])
+            && $db->delete($this->permissionTable, ["accId"=> $id]);
     }
 
-    public function gets(){
+    public function gets($options){
+        $default = array(
+            "page"=> 1,
+            "limit"=> 100
+        );
+        $options = array_merge($default, $options);
+        $skip = ($options['page']-1)*$options['limit'];
 
+        $db = MedooFactory::getInstance();
+        $data = $db->select($this->table,
+            ["[>]".$this->detailTable => ['accId', 'accId']],
+            '*', [
+                'LIMIT'=> [$skip, $options['limit']],
+                'ORDER'=> 'accId DESC'
+            ]);
+
+        $total = $db->count($this->table);
+
+        $res = [
+            'length'=> count($data),
+            'total'=> $total,
+            'data'=> $data,
+            'paging'=> [
+                'page'=> (int)$options['page'],
+                'limit'=> (int)$options['limit']
+            ]
+        ];
+        return $res;
     }
 }

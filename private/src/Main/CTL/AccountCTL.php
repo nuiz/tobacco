@@ -37,4 +37,58 @@ class AccountCTL extends BaseCTL {
             return new JsonView(ResponseHelper::error('Error'));
         }
     }
+
+    /**
+     * @PUT
+     * @uri /[:id]
+     */
+    public function update(){
+        $id = $this->reqInfo->urlParam('id');
+        $params = $this->reqInfo->params();
+
+        MedooFactory::getInstance()->pdo->beginTransaction();
+        try {
+            AccountService::getInstance()->updateDetail($id, $params);
+            MedooFactory::getInstance()->pdo->commit();
+            $item = AccountService::getInstance()->get($id);
+            return new JsonView($item);
+        }
+        catch (AccountServiceException $e){
+            MedooFactory::getInstance()->pdo->rollBack();
+            error_log($e);
+            return new JsonView(ResponseHelper::error('Error'));
+        }
+    }
+
+    /**
+     * @GET
+     * @uri /[i:id]
+     */
+    public function get(){
+        $id = $this->reqInfo->urlParam('id');
+
+        try {
+            $item = AccountService::getInstance()->get($id);
+            return new JsonView($item);
+        }
+        catch (AccountServiceException $e){
+            Log($e);
+            return new JsonView(ResponseHelper::error('Error'));
+        }
+    }
+
+    /**
+     * @GET
+     */
+    public function gets(){
+        $params = $this->reqInfo->params();
+        try {
+            $item = AccountService::getInstance()->gets($params);
+            return new JsonView($item);
+        }
+        catch (AccountServiceException $e){
+            Log($e);
+            return new JsonView(ResponseHelper::error('Error'));
+        }
+    }
 }

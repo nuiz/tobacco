@@ -7,7 +7,8 @@
  */
 
 namespace Main\CTL;
-use Main\Http\ParseInput;
+use Main\Service\AccountService;
+use Main\View\JsonView;
 
 
 /**
@@ -16,10 +17,10 @@ use Main\Http\ParseInput;
  */
 class TestCTL {
     /**
-     * @PUT
+     * @GET
      */
     public function put(){
-        ParseInput::multiPartFormData(file_get_contents('php://input'));
-        exit();
+        $test = AccountService::getInstance()->gets(['page'=> 2]);
+        return new JsonView($test);
     }
 }
