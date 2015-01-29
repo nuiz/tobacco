@@ -20,5 +20,8 @@ class Context {
 
     }
 
-
+    public function getLang(){
+//        return "En";
+        return null;
+    }
 }

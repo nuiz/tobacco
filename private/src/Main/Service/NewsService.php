@@ -19,7 +19,15 @@ use Valitron\Validator;
 
 class NewsService extends BaseService {
 
-    protected $table = "news";
+    private static $instance = null;
+    private $table = "news";
+
+    public static function getInstance(){
+        if(is_null(self::$instance)){
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
     // insert news
     public function add($params, Context $ctx){
@@ -62,6 +70,11 @@ class NewsService extends BaseService {
             'LIMIT'=> [$skip, $options['limit']],
             'ORDER'=> 'created_at DESC'
         ]);
+
+        if(!$data){
+            var_dump($masterDB->error());
+            exit();
+        }
 
         $total = $masterDB->count($this->table);
 
