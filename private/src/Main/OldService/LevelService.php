@@ -9,15 +9,13 @@
 namespace Main\Service;
 
 
-use Main\Context\Context;
 use Main\DB\Medoo\MedooFactory;
-use Main\Helper\LangHelper;
 use Main\Helper\ServiceHelper;
 
-class CategoryService extends BaseService {
+class LevelService extends BaseService {
 
     private static $instance = null;
-    private $table = "category";
+    private $table = "masterLevel";
 
     public static function getInstance(){
         if(is_null(self::$instance)){
@@ -26,7 +24,7 @@ class CategoryService extends BaseService {
         return self::$instance;
     }
 
-    public function gets($options = [], Context $ctx){
+    public function gets($options = []){
         $default = ServiceHelper::getDefaultOptionList();
         $options = array_merge($default, $options);
         $skip = ($options['page']-1)*$options['limit'];
@@ -35,12 +33,12 @@ class CategoryService extends BaseService {
         $data = $db->select($this->table,
             '*', [
                 'LIMIT'=> [$skip, $options['limit']],
-                'ORDER'=> 'category_id DESC'
+                'ORDER'=> 'levelId DESC'
             ]);
 
         $total = $db->count($this->table);
         foreach($data as $key => $value){
-//            $this->unSerializeData($data[$key], $ctx);
+            $this->unSerializeData($data[$key]);
         }
         $res = [
             'length'=> count($data),
@@ -54,7 +52,7 @@ class CategoryService extends BaseService {
         return $res;
     }
 
-    public function unSerializeData(&$data, Context $ctx){
-        $data['category'] = LangHelper::getLang($data['category'], $ctx->getLang());
+    public function unSerializeData(&$data){
+        $data['levelName'] = unserialize($data['levelName']);
     }
 }

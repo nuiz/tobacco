@@ -60,4 +60,14 @@ class ResponseHelper {
             ]
         ];
     }
+
+    public static function permissionNotAllowed($message = "You don't have permission"){
+        return [
+            'error'=> [
+                'code'=> 402,
+                'message'=> $message,
+                'type'=> 'PermissionNotAllowed'
+            ]
+        ];
+    }
 }

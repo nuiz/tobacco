@@ -9,13 +9,17 @@
 namespace Main\Http;
 
 
+use Main\DB\Medoo\MedooFactory;
+use Main\View\JsonView;
+
 class RequestInfo {
     private $inputs = array(),
         $params = array(),
         $queries = array(),
         $files = array(),
         $method = 'GET',
-        $url_params = array();
+        $url_params = array(),
+        $auth_info = null;
 
     public function __construct($method, $queries, $params, $files, $url_params){
         $this->method = $method;
@@ -111,5 +115,26 @@ class RequestInfo {
     public function urlParam($name)
     {
         return $this->url_params[$name];
+    }
+
+    // request auth
+    public function getAuthAccount(){
+        $token = $this->input("auth_token");
+        if(is_null($this->auth_info) && !is_null($token)){
+            $db = MedooFactory::getInstance();
+            $this->auth_info = $db->get("account", "*", ["auth_token"=> $token]);
+            if($this->auth_info === false){
+                $view = new JsonView(array(
+                    "error"=> array(
+                        "code"=> 402,
+                        "message"=> "authorize error"
+                    )
+                ));
+
+                $view->render();
+                exit();
+            }
+        }
+        return $this->auth_info;
     }
 }

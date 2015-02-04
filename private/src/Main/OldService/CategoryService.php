@@ -17,7 +17,7 @@ use Main\Helper\ServiceHelper;
 class CategoryService extends BaseService {
 
     private static $instance = null;
-    private $table = "category";
+    private $table = "mastercategory";
 
     public static function getInstance(){
         if(is_null(self::$instance)){
@@ -35,12 +35,12 @@ class CategoryService extends BaseService {
         $data = $db->select($this->table,
             '*', [
                 'LIMIT'=> [$skip, $options['limit']],
-                'ORDER'=> 'category_id DESC'
+                'ORDER'=> 'categoryId DESC'
             ]);
 
         $total = $db->count($this->table);
         foreach($data as $key => $value){
-//            $this->unSerializeData($data[$key], $ctx);
+            $this->unSerializeData($data[$key], $ctx);
         }
         $res = [
             'length'=> count($data),

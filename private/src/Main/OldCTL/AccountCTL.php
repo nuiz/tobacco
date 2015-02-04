@@ -7,11 +7,7 @@
  */
 
 namespace Main\CTL;
-use Main\DAO\ListDAO;
-use Main\Helper\ArrayHelper;
 use Main\Helper\ResponseHelper;
-use Main\Helper\URL;
-use Main\Permission\AccountPermission;
 use Valitron\Validator;
 use Main\DB\Medoo\MedooFactory;
 use Main\Service\AccountService\AccountServiceException;
@@ -23,7 +19,6 @@ use Main\View\JsonView;
  * @uri /account
  */
 class AccountCTL extends BaseCTL {
-    private $table = "account";
     /**
      * @POST
      */
@@ -42,87 +37,6 @@ class AccountCTL extends BaseCTL {
             return new JsonView(ResponseHelper::error('Error'));
         }
     }
-
-    /**
-     * @POST
-     * @uri /cluster
-     */
-    public function addCluster(){
-        $params = $this->reqInfo->params();
-        $params = ArrayHelper::filterKey(["username", "password"], $params);
-        $params["level_id"] = 3;
-
-        $user = $this->reqInfo->getAuthAccount();
-        AccountPermission::requirePermission($user, [AccountPermission::ID_CLUSTER_IT, AccountPermission::ID_SUPER_ADMIN]);
-
-        $db = MedooFactory::getInstance();
-
-        if($db->count($this->table, ["username"=> $params["username"]]) > 0){
-            return [
-                "error"=> [
-                    "code"=> 1,
-                    "message"=> "duplicate username"
-                ]
-            ];
-        }
-
-        $id = $db->insert($this->table, $params);
-
-        $item = $this->_get($id);
-        return new JsonView($item);
-    }
-
-    /**
-     * @POST
-     * @uri /writer
-     */
-    public function addWriter(){
-        $params = $this->reqInfo->params();
-        $params = ArrayHelper::filterKey(["username", "password"], $params);
-        $params["level_id"] = 4;
-
-        $user = $this->reqInfo->getAuthAccount();
-        AccountPermission::requirePermission($user, [AccountPermission::ID_CLUSTER, AccountPermission::ID_CLUSTER_IT, AccountPermission::ID_SUPER_ADMIN]);
-
-        $db = MedooFactory::getInstance();
-
-        if($db->count($this->table, ["username"=> $params["username"]]) > 0){
-            return [
-                "error"=> [
-                    "code"=> 1,
-                    "message"=> "duplicate username"
-                ]
-            ];
-        }
-
-        $id = $db->insert($this->table, $params);
-
-        $item = $this->_get($id);
-        return new JsonView($item);
-    }
-
-    /**
-     * @GET
-     * @uri /cluster
-     */
-    public function listCluster(){
-        $params = $this->reqInfo->params();
-        $params["url"] = URL::absolute("/account/cluster");
-        $params["where"] = [
-            "ORDER"=> "account_id DESC"
-        ];
-        $listResponse = ListDAO::gets($this->table, $params);
-        return new JsonView($listResponse);
-    }
-
-
-
-
-
-
-
-
-
 
     /**
      * @PUT
@@ -176,11 +90,5 @@ class AccountCTL extends BaseCTL {
             Log($e);
             return new JsonView(ResponseHelper::error('Error'));
         }
-    }
-
-    // internal function
-    public function _get($id){
-        $db = MedooFactory::getInstance();
-        return $db->get($this->table, "*", ["account_id"=> $id]);
     }
 }

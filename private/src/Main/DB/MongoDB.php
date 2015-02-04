@@ -3,6 +3,8 @@
 
 namespace Main\DB;
 
+use Main\AppConfig;
+
 class MongoDB {
 
     /** @var  \MongoClient $mongo */
@@ -17,7 +19,7 @@ class MongoDB {
 
     public static function getDB(){
         if(is_null(self::$db)){
-            self::$db = self::getMongo()->{AppConfig::get("db.mongodb.name")};
+            self::$db = self::getMongo()->{AppConfig::get("db.mongodb.database")};
         }
         return self::$db;
     }

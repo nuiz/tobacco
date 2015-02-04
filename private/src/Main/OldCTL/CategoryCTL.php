@@ -15,7 +15,7 @@ use Main\Log\Log;
 
 /**
  * @Restful
- * @uri /category
+ * @uri /masterCategory
  */
 class CategoryCTL extends BaseCTL {
     /**

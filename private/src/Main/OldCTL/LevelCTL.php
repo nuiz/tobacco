@@ -7,27 +7,27 @@
  */
 
 namespace Main\CTL;
-use Main\Service\CategoryService;
-use Main\Service\CategoryService\CategoryServiceException;
+use Main\Service\LevelService;
 use Main\View\JsonView;
 use Main\Helper\ResponseHelper;
+use Main\Service\LevelService\LevelServiceException;
 use Main\Log\Log;
 
 /**
  * @Restful
- * @uri /category
+ * @uri /masterLevel
  */
-class CategoryCTL extends BaseCTL {
+class LevelCTL extends BaseCTL {
     /**
      * @GET
      */
     public function gets(){
         $params = $this->reqInfo->params();
         try {
-            $item = CategoryService::getInstance()->gets($params, $this->getCtx());
+            $item = LevelService::getInstance()->gets($params);
             return new JsonView($item);
         }
-        catch (CategoryServiceException $e){
+        catch (LevelServiceException $e){
             Log::error($e);
             return new JsonView(ResponseHelper::error('Error'));
         }

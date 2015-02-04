@@ -20,6 +20,7 @@ class BaseCTL {
     public function __construct(RequestInfo $reqInfo){
         $this->reqInfo = $reqInfo;
         $this->ctx = new Context();
+
     }
 
     public function getCtx(){

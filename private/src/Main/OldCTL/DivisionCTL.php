@@ -7,27 +7,27 @@
  */
 
 namespace Main\CTL;
-use Main\Service\CategoryService;
-use Main\Service\CategoryService\CategoryServiceException;
+use Main\Service\DivisionService;
+use Main\Service\DivisionService\DivisionServiceException;
 use Main\View\JsonView;
 use Main\Helper\ResponseHelper;
 use Main\Log\Log;
 
 /**
  * @Restful
- * @uri /category
+ * @uri /masterDivision
  */
-class CategoryCTL extends BaseCTL {
+class DivisionCTL extends BaseCTL {
     /**
      * @GET
      */
     public function gets(){
         $params = $this->reqInfo->params();
         try {
-            $item = CategoryService::getInstance()->gets($params, $this->getCtx());
+            $item = DivisionService::getInstance()->gets($params);
             return new JsonView($item);
         }
-        catch (CategoryServiceException $e){
+        catch (DivisionServiceException $e){
             Log::error($e);
             return new JsonView(ResponseHelper::error('Error'));
         }
