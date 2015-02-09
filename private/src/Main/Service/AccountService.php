@@ -84,7 +84,6 @@ class AccountService extends BaseService {
     public function get($id){
         $db = MedooFactory::getInstance();
         $item = $db->get($this->table,
-            ["[>]".$this->detailTable => ['accId', 'accId']],
             '*',
             [$this->table.'.accId'=> $id]);
 

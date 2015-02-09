@@ -109,20 +109,27 @@ class AccountCTL extends BaseCTL {
         $params = $this->reqInfo->params();
         $params["url"] = URL::absolute("/account/cluster");
         $params["where"] = [
+            "level_id"=> 3,
             "ORDER"=> "account_id DESC"
         ];
         $listResponse = ListDAO::gets($this->table, $params);
         return new JsonView($listResponse);
     }
 
-
-
-
-
-
-
-
-
+    /**
+     * @GET
+     * @uri /writer
+     */
+    public function listWriter(){
+        $params = $this->reqInfo->params();
+        $params["url"] = URL::absolute("/account/writer");
+        $params["where"] = [
+            "level_id"=> 4,
+            "ORDER"=> "account_id DESC"
+        ];
+        $listResponse = ListDAO::gets($this->table, $params);
+        return new JsonView($listResponse);
+    }
 
     /**
      * @PUT
@@ -147,20 +154,71 @@ class AccountCTL extends BaseCTL {
     }
 
     /**
+     * @DELETE
+     * @uri /cluster/[:id]
+     */
+    public function deleteCluster(){
+        $id = $this->reqInfo->urlParam('id');
+
+        $user = $this->reqInfo->getAuthAccount();
+        AccountPermission::requirePermission($user, [AccountPermission::ID_CLUSTER, AccountPermission::ID_CLUSTER_IT, AccountPermission::ID_SUPER_ADMIN]);
+
+        $db = MedooFactory::getInstance();
+        $ss = $db->delete($this->table, ["AND"=> ["account_id"=> $id, "level_id"=> 3]]);
+
+        return ["success"=> true];
+    }
+
+    /**
+     * @DELETE
+     * @uri /writer/[:id]
+     */
+    public function deleteWriter(){
+        $id = $this->reqInfo->urlParam('id');
+
+        $user = $this->reqInfo->getAuthAccount();
+        AccountPermission::requirePermission($user, [AccountPermission::ID_CLUSTER, AccountPermission::ID_CLUSTER_IT, AccountPermission::ID_SUPER_ADMIN]);
+
+        $db = MedooFactory::getInstance();
+        $db->delete($this->table, ["account_id"=> $id, "level"=> 4]);
+
+        return ["success"=> true];
+    }
+
+    /**
+     * @POST
+     * @uri /change_password/[:id]
+     */
+    public function changePassword(){
+        $id = $this->reqInfo->urlParam('id');
+        $params = $this->reqInfo->params();
+
+        $v = new Validator($params);
+        $v->rule("required", ["new_password"]);
+
+        $db = MedooFactory::getInstance();
+        $db->update($this->table, ["password"=> $params["new_password"]], ["account_id"=> $id]);
+
+        return ["success"=> true];
+    }
+
+    /**
      * @GET
      * @uri /[i:id]
      */
     public function get(){
         $id = $this->reqInfo->urlParam('id');
 
-        try {
-            $item = AccountService::getInstance()->get($id);
-            return new JsonView($item);
+        $db = MedooFactory::getInstance();
+        $item = $db->get($this->table,
+            '*',
+            ["account_id"=> $id]);
+
+        if(!$item){
+            $item = null;
         }
-        catch (AccountServiceException $e){
-            Log($e);
-            return new JsonView(ResponseHelper::error('Error'));
-        }
+
+        return new JsonView($item);
     }
 
     /**
