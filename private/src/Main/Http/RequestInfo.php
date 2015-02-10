@@ -48,7 +48,7 @@ class RequestInfo {
         }
         else if($method=='PUT' || $method == 'DELETE'){
             $put = array();
-            if($ctType=='multipart/form-data'){
+            if(strpos($ctType, 'multipart/form-data') !== false){
                 $parse = ParseInput::multiPartFormData(file_get_contents('php://input'));
                 $put = $parse['data'];
                 $files = $parse['files'];
