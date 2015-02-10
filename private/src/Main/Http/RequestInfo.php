@@ -104,6 +104,14 @@ class RequestInfo {
         return $this->method;
     }
 
+    public function file($name){
+        return isset($this->files[$name])? $this->files[$name]: null;
+    }
+
+    public function files(){
+        return $this->files;
+    }
+
     /**
      * @return array
      */
