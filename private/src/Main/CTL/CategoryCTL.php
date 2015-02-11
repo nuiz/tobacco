@@ -7,29 +7,35 @@
  */
 
 namespace Main\CTL;
+use Main\DAO\ListDAO;
+use Main\Helper\URL;
 use Main\Service\CategoryService;
 use Main\Service\CategoryService\CategoryServiceException;
 use Main\View\JsonView;
-use Main\Helper\ResponseHelper;
-use Main\Log\Log;
 
 /**
  * @Restful
  * @uri /category
  */
 class CategoryCTL extends BaseCTL {
+    private $table = "category";
+
     /**
      * @GET
      */
     public function gets(){
         $params = $this->reqInfo->params();
-        try {
-            $item = CategoryService::getInstance()->gets($params, $this->getCtx());
-            return new JsonView($item);
+        $params["url"] = URL::absolute("/category");
+        $params["where"] = [
+            "ORDER"=> "category_id DESC",
+            "parent_id"=> 0
+        ];
+
+        if(isset($params["parent_id"])){
+            $params["where"]["parent_id"] = $params["parent_id"];
         }
-        catch (CategoryServiceException $e){
-            Log::error($e);
-            return new JsonView(ResponseHelper::error('Error'));
-        }
+
+        $listResponse = ListDAO::gets($this->table, $params);
+        return new JsonView($listResponse);
     }
 }

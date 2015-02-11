@@ -24,7 +24,7 @@ class MedooFactory {
     public static function getInstance($name = 'master'){
         if(!isset(self::$instances[$name])){
             $paramPath = 'db.medoo.'.$name;
-            self::$instances[$name] = new \medoo([
+            self::$instances[$name] = new Medoo([
                 // required
                 'database_type' => AppConfig::get($paramPath.'.database_type'),
                 'database_name' => AppConfig::get($paramPath.'.database_name'),

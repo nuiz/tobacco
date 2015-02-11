@@ -19,9 +19,15 @@ class ListDAO {
         $where["LIMIT"] = [$skip, $options['limit']];
 
         $db = MedooFactory::getInstance();
-        $data = $db->select($table, $options["field"], $where);
+        if(isset($options["join"])){
+            $data = $db->select($table, $options["join"], $options["field"], $where);
+        }
+        else {
+            $data = $db->select($table, $options["field"], $where);
+        }
 
         unset($where["LIMIT"]);
+        unset($where["ORDER"]);
         $total = $db->count($table, $where);
 
         $res = [
