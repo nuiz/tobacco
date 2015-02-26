@@ -2,39 +2,32 @@
 /**
  * Created by PhpStorm.
  * User: NUIZ
- * Date: 29/1/2558
- * Time: 11:47
+ * Date: 26/2/2558
+ * Time: 14:17
  */
 
 namespace Main\CTL;
 use Main\DAO\ListDAO;
-use Main\DB\Medoo\MedooFactory;
-use Main\Helper\URL;
-use Main\Service\CategoryService;
-use Main\Service\CategoryService\CategoryServiceException;
 use Main\View\JsonView;
+use Main\Helper\URL;
+use Main\DB\Medoo\MedooFactory;
 
 /**
  * @Restful
- * @uri /category
+ * @uri /book_type
  */
-class CategoryCTL extends BaseCTL {
-    private $table = "category";
+class BookTypeCTL extends BaseCTL {
+    private $table = "book_type";
 
     /**
      * @GET
      */
     public function gets(){
         $params = $this->reqInfo->params();
-        $params["url"] = URL::absolute("/category");
+        $params["url"] = URL::absolute("/book_type");
         $params["where"] = [
-            "ORDER"=> "category_id DESC",
-            "parent_id"=> 0
+            "ORDER"=> "book_type_id DESC"
         ];
-
-        if(isset($params["parent_id"])){
-            $params["where"]["parent_id"] = $params["parent_id"];
-        }
 
         $listResponse = ListDAO::gets($this->table, $params);
         return new JsonView($listResponse);
@@ -47,7 +40,7 @@ class CategoryCTL extends BaseCTL {
     public function get(){
         $id = $this->reqInfo->urlParam("id");
         $db = MedooFactory::getInstance();
-        $item = $db->get($this->table, "*", ["category_id"=> $id]);
+        $item = $db->get($this->table, "*", ["book_type_id"=> $id]);
 
         return new JsonView($item);
     }

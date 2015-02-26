@@ -24,7 +24,8 @@ class AccountService extends BaseService {
         return self::$instance;
     }
 
-    protected $table = "account", $detailTable = "accountDetail", $permissionTable = "permissionAccount";
+    protected $table = "account";
+
     public function add($params){
         $v = new Validator($params);
         $v->rule('required', ['username', 'password', 'level']);
@@ -44,40 +45,6 @@ class AccountService extends BaseService {
             throw new AccountServiceException();
         }
 
-        $accDetailField = ['name', 'lastname', 'email', 'phone', 'mobile', 'picture', 'introduced', 'history'];
-        $accDetailInsert = ArrayHelper::filterKey(['name', 'lastname', 'email', 'phone', 'mobile', 'picture', 'introduced', 'history'], $params);
-        foreach($accDetailField as $item){
-            if(!isset($accDetailInsert[$item])){
-                $accDetailInsert[$item] = "";
-            }
-        }
-        $accDetailInsert['accId'] = $accId;
-
-        if($accId == 0){
-            throw new AccountServiceException();
-        }
-        $accDetailId = $db->insert($this->detailTable, $accDetailInsert);
-//        if($accDetailId == 0){
-//            throw new AccountServiceException();
-//        }
-
-        $permissionAccountInsert = [
-            'accId'=> $accId,
-            'name'=> $params['level'],
-            'manageAdmin'=> 'yes',
-            'manageUser'=> 'yes',
-            'view'=> 'yes',
-            'add'=> 'yes',
-            'edit'=> 'yes',
-            'del'=> 'yes',
-            'download'=> 'yes',
-            'approve'=> 'yes',
-            'vote'=> 'yes',
-            'share'=> 'yes',
-            'comment'=> 'yes'
-        ];
-        $permissionAccId = $db->insert($this->permissionTable, $permissionAccountInsert);
-
         return $accId;
     }
 
@@ -91,27 +58,12 @@ class AccountService extends BaseService {
     }
 
     public function updateDetail($id, $params){
-
-        $paramUpdate = ArrayHelper::filterKey(['name', 'lastname', 'email', 'phone', 'mobile', 'picture', 'introduced', 'history'], $params);
-        if(count($paramUpdate) == 0){
-            return $this->get($id);
-        }
-
-        $db = MedooFactory::getInstance();
-        $count = $db->count($this->table, ["accId"=> $id]);
-        if($count == 0){
-            return $this->get($id);
-        }
-
-        $db->update($this->table, $paramUpdate, ["accId"=> $id]);
         return $this->get($id);
     }
 
     public function delete($id){
         $db = MedooFactory::getInstance();
-        return $db->delete($this->table, ["accId"=> $id])
-            && $db->delete($this->detailTable, ["accId"=> $id])
-            && $db->delete($this->permissionTable, ["accId"=> $id]);
+        return $db->delete($this->table, ["accId"=> $id]);
     }
 
     public function gets($options){
@@ -124,10 +76,9 @@ class AccountService extends BaseService {
 
         $db = MedooFactory::getInstance();
         $data = $db->select($this->table,
-            ["[>]".$this->detailTable => ['accId', 'accId']],
             '*', [
                 'LIMIT'=> [$skip, $options['limit']],
-                'ORDER'=> 'accId DESC'
+                'ORDER'=> 'account_id DESC'
             ]);
 
         $total = $db->count($this->table);

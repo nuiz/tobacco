@@ -21,10 +21,10 @@ use Main\View\JsonView;
  * @uri /content
  */
 class ContentCTL extends BaseCTL {
-    private $table = "content", $table_html = "content_html", $table_video = "content_video";
+    private $table = "content", $table_book = "content_book", $table_video = "content_video";
     private $join = [
         "[>]content_video"=> ["content_id"=> "content_id"],
-        "[>]content_html"=> ["content_id"=> "content_id"],
+        "[>]content_book"=> ["content_id"=> "content_id"],
 //        "[>]content_pdf"=> ["content_id"=> "content_id"],
     ];
 
@@ -56,7 +56,7 @@ class ContentCTL extends BaseCTL {
      */
     public function add(){
         $params = $this->reqInfo->params();
-        $insert = ArrayHelper::filterKey(["content_name", "category_id", "content_text", "content_type"], $params);
+        $insert = ArrayHelper::filterKey(["content_name", "category_id", "content_description", "content_type"], $params);
 
         $user = $this->reqInfo->getAuthAccount();
         AccountPermission::requirePermission($user, [AccountPermission::ID_CLUSTER_IT, AccountPermission::ID_SUPER_ADMIN, AccountPermission::ID_WRITER]);
@@ -68,20 +68,41 @@ class ContentCTL extends BaseCTL {
         $insert["account_id"] = $user["account_id"];
         $id = $db->insert($this->table, $insert);
 
-        if($insert["content_type"] == "html"){
-            $insertHtml = ArrayHelper::filterKey(["content_html"], $params);
-            $insertHtml["content_id"] = $id;
-            $db->insert($this->table_html, $insertHtml);
+        if($insert["content_type"] == "book"){
+            $insertBook = ArrayHelper::filterKey(["book_author", "book_publishing_house", "book_date", "book_type_id"], $params);
+            $insertBook["content_id"] = $id;
+
+            $book = FileUpload::load($this->reqInfo->file("book"));
+            $name = $book->generateName(true);
+            $des = "public/book/".$name;
+            $book->move($des);
+            $insertBook['book_path'] = $name;
+
+            $book_cover = FileUpload::load($this->reqInfo->file("book_cover"));
+            $name = $book_cover->generateName(true);
+            $des = "public/book_cover/".$name;
+            $book_cover->move($des);
+            $insertBook['book_cover_path'] = $name;
+
+            $db->insert($this->table_book, $insertBook);
             $db->pdo->commit();
         }
 
         if($insert["content_type"] == "video"){
-            $video = FileUpload::load($this->reqInfo->file("video"));
-            $des = "public/video/".$video->generateName(true);
-            $video->move($des);
+            $insertVideo = ["content_id"=> $id];
 
-            $insertVideo = ["video_path"=> $des];
-            $insertVideo["content_id"] = $id;
+            $video = FileUpload::load($this->reqInfo->file("video"));
+            $name = $video->generateName(true);
+            $des = "public/video/".$name;
+            $video->move($des);
+            $insertVideo['video_path'] = $name;
+
+            $video_thumb = FileUpload::load($this->reqInfo->file("video_thumb"));
+            $name = $video_thumb->generateName(true);
+            $des = "public/video_thumb/".$name;
+            $video_thumb->move($des);
+            $insertVideo['video_thumb_path'] = $name;
+
             $db->insert($this->table_video, $insertVideo);
             $db->pdo->commit();
         }
@@ -115,9 +136,9 @@ class ContentCTL extends BaseCTL {
         $old = $this->_get($id);
         $db = MedooFactory::getInstance();
         $db->pdo->beginTransaction();
-        if($old["content_type"]=="html"){
+        if($old["content_type"]=="book"){
             $db->delete($this->table, ["content_id"=> $id]);
-            $db->delete($this->table_html, ["content_id"=> $id]);
+            $db->delete($this->table_book, ["content_id"=> $id]);
             $db->pdo->commit();
             return ["success"=> true];
         }
@@ -138,14 +159,14 @@ class ContentCTL extends BaseCTL {
      */
     public function edit(){
         $type = $this->reqInfo->param("content_type");
-        if($type == "html"){
+        if($type == "book"){
             return $this->_editHtml();
         }
         else if($type == "video"){
             return $this->_editVideo();
         }
         else {
-            return ResponseHelper::error("Only type html, video");
+            return ResponseHelper::error("Only type book, video");
         }
     }
 
@@ -162,9 +183,9 @@ class ContentCTL extends BaseCTL {
 
         $db->update($this->table, $update, ["content_id"=> $id]);
 
-        if($old["content_type"] == "html"){
-            $updateHtml = ArrayHelper::filterKey(["content_html"], $params);
-            $db->update($this->table_html, $updateHtml, ["content_id"=> $id]);
+        if($old["content_type"] == "book"){
+            $updateHtml = ArrayHelper::filterKey(["content_book"], $params);
+            $db->update($this->table_book, $updateHtml, ["content_id"=> $id]);
             $db->pdo->commit();
         }
 
@@ -213,7 +234,10 @@ class ContentCTL extends BaseCTL {
     }
 
     public function build(&$item){
-        $item["video_url"] = URL::absolute("/".$item["video_path"]);
+        $item["video_url"] = URL::absolute("/public/video/".$item["video_path"]);
+        $item["video_thumb_url"] = URL::absolute("/public/video_thumb/".$item["video_thumb_path"]);
+        $item["book_url"] = URL::absolute("/public/book/".$item["book_path"]);
+        $item["book_cover_url"] = URL::absolute("/public/book_cover/".$item["book_cover_path"]);
     }
 
     public function builds(&$items){
