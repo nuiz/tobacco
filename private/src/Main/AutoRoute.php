@@ -22,7 +22,12 @@ class AutoRoute {
 
         if($match['target']){
             $reqInfo = RequestInfo::loadFromGlobal(array("url_params"=> $match['params']));
-            $ctl = new $match['target']['c']($reqInfo);
+            $ctl = new $match['target']['c']();
+            $ctl->setReqInfo($reqInfo);
+            if(method_exists($ctl, 'beforeAction')){
+                $ctl->beforeAction();
+            }
+
             $response = $ctl->{$match['target']['a']}();
             if($response instanceof BaseView){
                 header("Content-type: application/json");

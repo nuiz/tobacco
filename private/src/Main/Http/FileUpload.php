@@ -93,6 +93,30 @@ class FileUpload {
         $this->ext = $ext;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getOriginalPath()
+    {
+        return $this->original_path;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOriginalName()
+    {
+        return $this->original_name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOriginalExt()
+    {
+        return $this->original_ext;
+    }
+
     // function
     public function generateName($with_ext = false){
         $name = uniqid("file");

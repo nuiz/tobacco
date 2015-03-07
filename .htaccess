@@ -1,6 +1,6 @@
-php_value upload_max_filesize 40M
-php_value post_max_size 42M
-php_value memory_limit 1024M
+php_value upload_max_filesize 2048M
+php_value post_max_size 2048M
+php_value memory_limit 2048M
 
 <IfModule mod_rewrite.c>
     Options -MultiViews

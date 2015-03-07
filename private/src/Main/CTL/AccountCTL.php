@@ -132,6 +132,38 @@ class AccountCTL extends BaseCTL {
     }
 
     /**
+     * @GET
+     * @uri /user
+     */
+    public function listUser(){
+        $params = $this->reqInfo->params();
+        $params["url"] = URL::absolute("/account/user");
+        $params["field"] = ["account_id", "username"];
+        $params["where"] = [
+            "level_id"=> 0,
+            "ORDER"=> "account_id DESC",
+            "LIMIT"=> 1000
+        ];
+        $listResponse = ListDAO::gets($this->table, $params);
+        return new JsonView($listResponse);
+    }
+
+
+    /**
+     * @POST
+     * @uri /upwriter
+     */
+    public function upwriter(){
+        $params = $this->reqInfo->params();
+        $db = MedooFactory::getInstance();
+
+        $id = $db->update($this->table, ["level_id"=> 4], ["account_id"=> $params["account_id"]]);
+
+        $item = $this->_get($params["account_id"]);
+        return new JsonView($item);
+    }
+
+    /**
      * @PUT
      * @uri /[:id]
      */

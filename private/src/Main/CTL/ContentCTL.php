@@ -21,11 +21,11 @@ use Main\View\JsonView;
  * @uri /content
  */
 class ContentCTL extends BaseCTL {
-    private $table = "content", $table_book = "content_book", $table_video = "content_video";
+    private $table = "content", $table_book = "content_book", $table_video = "content_video", $table_attach_file = "content_attach_file";
     private $join = [
-        "[>]content_video"=> ["content_id"=> "content_id"],
+//        "[>]content_video"=> ["content_id"=> "content_id"],
         "[>]content_book"=> ["content_id"=> "content_id"],
-//        "[>]content_pdf"=> ["content_id"=> "content_id"],
+        "[>]category"=> ["category_id"=> "category_id"]
     ];
 
     /**
@@ -59,7 +59,7 @@ class ContentCTL extends BaseCTL {
         $insert = ArrayHelper::filterKey(["content_name", "category_id", "content_description", "content_type"], $params);
 
         $user = $this->reqInfo->getAuthAccount();
-        AccountPermission::requirePermission($user, [AccountPermission::ID_CLUSTER_IT, AccountPermission::ID_SUPER_ADMIN, AccountPermission::ID_WRITER]);
+//        AccountPermission::requirePermission($user, [AccountPermission::ID_CLUSTER_IT, AccountPermission::ID_SUPER_ADMIN, AccountPermission::ID_WRITER]);
 
         // begin transaction
         $db = MedooFactory::getInstance();
@@ -89,22 +89,49 @@ class ContentCTL extends BaseCTL {
         }
 
         if($insert["content_type"] == "video"){
-            $insertVideo = ["content_id"=> $id];
 
-            $video = FileUpload::load($this->reqInfo->file("video"));
-            $name = $video->generateName(true);
-            $des = "public/video/".$name;
-            $video->move($des);
-            $insertVideo['video_path'] = $name;
+            function insertVideo($video, $thumb, $id, $db, $table_video){
+                $insertVideo = ["content_id"=> $id];
+                $video = FileUpload::load($video);
+                $name = $video->generateName(true);
+                $des = "public/video/".$name;
+                $video->move($des);
+                $insertVideo['video_path'] = $name;
 
-            $video_thumb = FileUpload::load($this->reqInfo->file("video_thumb"));
-            $name = $video_thumb->generateName(true);
-            $des = "public/video_thumb/".$name;
-            $video_thumb->move($des);
-            $insertVideo['video_thumb_path'] = $name;
+                $video_thumb = FileUpload::load($thumb);
+                $name = $video_thumb->generateName(true);
+                $des = "public/video_thumb/".$name;
+                $video_thumb->move($des);
+                $insertVideo['video_thumb_path'] = $name;
 
-            $db->insert($this->table_video, $insertVideo);
+                $db->insert($table_video, $insertVideo);
+            }
+
+//            $videos = [];
+            foreach($_FILES["videos"]["name"] as $key=> $value){
+//                $videos[] = ["name"=> $_FILES["videos"]["name"][$key], "tmp_name"=> $_FILES["videos"]["tmp_name"][$key]];
+                insertVideo(["name"=> $_FILES["videos"]["name"][$key], "tmp_name"=> $_FILES["videos"]["tmp_name"][$key]],
+                    ["name"=> $_FILES["videos_thumb"]["name"][$key], "tmp_name"=> $_FILES["videos_thumb"]["tmp_name"][$key]], $id, $db, $this->table_video);
+            }
+
             $db->pdo->commit();
+        }
+
+        function insertAttachFile($file, $id, $db, $table_attach_file){
+            $insertVideo = ["content_id"=> $id];
+            $file = FileUpload::load($file);
+            $name = $file->generateName(true);
+            $des = "public/attach_file/".$name;
+            $file->move($des);
+            $insertVideo['file_path'] = $name;
+            $insertVideo['file_name'] = $file->getOriginalName();
+
+            $db->insert($table_attach_file, $insertVideo);
+        }
+
+        foreach($_FILES["attach_files"]["name"] as $key=> $value){
+            insertAttachFile(["name"=> $_FILES["attach_files"]["name"][$key], "tmp_name"=> $_FILES["attach_files"]["tmp_name"][$key]],
+                $id, $db, $this->table_attach_file);
         }
 
         $item = $this->_get($id);
@@ -234,10 +261,20 @@ class ContentCTL extends BaseCTL {
     }
 
     public function build(&$item){
-        $item["video_url"] = URL::absolute("/public/video/".$item["video_path"]);
-        $item["video_thumb_url"] = URL::absolute("/public/video_thumb/".$item["video_thumb_path"]);
+        $db = MedooFactory::getInstance();
         $item["book_url"] = URL::absolute("/public/book/".$item["book_path"]);
         $item["book_cover_url"] = URL::absolute("/public/book_cover/".$item["book_cover_path"]);
+        if($item["content_type"]=="video"){
+            $item["videos"] = $db->select($this->table_video, "*", ["content_id"=> $item["content_id"]]);
+            foreach($item["videos"] as $key=> $value){
+                $item["videos"][$key]["video_url"] = URL::absolute("/public/video/".$item["videos"][$key]["video_path"]);
+                $item["videos"][$key]["video_thumb_url"] = URL::absolute("/public/video_thumb/".$item["videos"][$key]["video_thumb_path"]);
+            }
+        }
+        $item["attach_files"] = $db->select($this->table_attach_file, "*", ["content_id"=> $item["content_id"]]);
+        foreach($item["attach_files"] as $key=> $value){
+            $item["attach_files"][$key]["file_url"] = URL::absolute("/public/video/".$item["videos"][$key]["video_path"]);
+        }
     }
 
     public function builds(&$items){

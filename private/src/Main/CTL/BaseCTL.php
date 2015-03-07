@@ -14,12 +14,27 @@ use Main\Http\RequestInfo;
 
 class BaseCTL {
     /**
-     * @var Context $ctx;
+     * @var Context $ctx, RequestInfo $req;
      */
     public $reqInfo, $ctx;
-    public function __construct(RequestInfo $reqInfo){
-        $this->reqInfo = $reqInfo;
+    public function __construct(){
         $this->ctx = new Context();
+    }
+
+    /**
+     * @return RequestInfo
+     */
+    public function getReqInfo()
+    {
+        return $this->reqInfo;
+    }
+
+    /**
+     * @param RequestInfo $reqInfo
+     */
+    public function setReqInfo(RequestInfo $reqInfo)
+    {
+        $this->reqInfo = $reqInfo;
     }
 
     public function getCtx(){

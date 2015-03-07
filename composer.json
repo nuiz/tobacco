@@ -16,6 +16,7 @@
     "vlucas/valitron": "1.1.7",
     "catfan/medoo": "v0.9.7",
     "phpunit/phpunit": "4.6.x-dev",
-    "imagecow/imagecow": "v1.2.0"
+    "imagecow/imagecow": "v1.2.0",
+    "mockery/mockery": "0.9.3"
   }
 }
