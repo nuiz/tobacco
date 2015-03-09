@@ -14,7 +14,7 @@ use Main\Http\RequestInfo;
 
 class BaseCTL {
     /**
-     * @var Context $ctx, RequestInfo $req;
+     * @var Context $ctx, RequestInfo $reqInfo;
      */
     public $reqInfo, $ctx;
     public function __construct(){

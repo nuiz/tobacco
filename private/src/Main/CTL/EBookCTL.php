@@ -49,9 +49,15 @@ class EBookCTL extends BaseCTL {
     public function gets(){
         $params = $this->reqInfo->params();
         if(isset($params["book_type_id"])){
-            return $this->getRepo()->getByTypeId($params["book_type_id"]);
+            $items = $this->getRepo()->getByTypeId($params["book_type_id"]);
         }
-        return $this->getRepo()->gets($params);
+        else {
+            $items = $this->getRepo()->gets($params);
+        }
+        foreach($items['data'] as $key=> $item){
+            $this->build($items['data'][$key]);
+        }
+        return $items;
     }
 
 
@@ -66,6 +72,11 @@ class EBookCTL extends BaseCTL {
         $auth_account = $this->reqInfo->getAuthAccount();
         $catPermissions = AccountPermission::getCatPermission($auth_account["account_id"]);
         return in_array($category_id, $catPermissions);
+    }
+
+    public function build(&$item){
+        $item["book_url"] = URL::absolute("/public/book/".$item["book_path"]);
+        $item["book_cover_url"] = URL::absolute("/public/book_cover/".$item["book_cover_path"]);
     }
 
     /**
