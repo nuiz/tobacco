@@ -58,4 +58,34 @@ class ConfigCTLTest extends \PHPUnit_Framework_TestCase {
         $res = $ctl->get();
         $this->assertEquals($items, $res);
     }
+
+    public function testUpdate(){
+        $name = "config_name";
+        $value = "pdf, jpeg";
+        $params = [$name=> $value];
+
+        $items = [
+            ["config_extension"=> "pdf, jpeg"]
+        ];
+
+        $reqMock = \Mockery::mock('Main\Http\RequestInfo');
+        $reqMock->shouldReceive("params")->andReturn($params);
+
+        $repoMock = \Mockery::mock('Main\Repository\ConfigSystemRepository');
+        $repoMock->shouldReceive("update")->andReturn($items);
+
+        $ctl = new ConfigCTL();
+        $ctl->setReqInfo($reqMock);
+        $ctl->setRepo($repoMock);
+
+        $res = $ctl->update();
+        $this->assertEquals($items, $res);
+
+        $reqMock2 = \Mockery::mock('Main\Http\RequestInfo');
+        $reqMock2->shouldReceive("params")->andReturn([]);
+        $ctl->setReqInfo($reqMock2);
+
+        $res = $ctl->update();
+        $this->assertEquals([], $res);
+    }
 }

@@ -19,8 +19,13 @@ class ConfigSystemRepository {
         $this->db = $db;
     }
 
-    public function update($name, $value){
-        return $this->db->update($this->table, ['config_value'=> $value], ['config_name'=> $name]);
+    public function update($params){
+        $res = [];
+        foreach($params as $key=> $value){
+            $this->db->update($this->table, ['config_value'=> $value], ['config_name'=> $key]);
+            $res[] = [$key=> $value];
+        }
+        return $res;
     }
 
     public function get($name){

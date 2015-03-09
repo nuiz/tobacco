@@ -9,6 +9,7 @@
 namespace Main\CTL;
 use Main\Helper\ArrayHelper;
 use Main\Permission\AccountPermission;
+use Main\Repository\EBookRepo;
 use Main\View\JsonView;
 use Valitron\Validator;
 use Main\Helper\ResponseHelper;
@@ -21,7 +22,10 @@ use Main\Helper\ImageHelper;
  * @uri /ebook
  */
 class EBookCTL extends BaseCTL {
-    protected $basePatth = "private/ebook", $table = "ebook";
+    /**
+     * @var EBookRepo $repo;
+     */
+    protected $basePatth = "private/ebook", $table = "ebook", $repo;
 
     /**
      * @POST
@@ -39,9 +43,44 @@ class EBookCTL extends BaseCTL {
         }
     }
 
+    /**
+     * @GET
+     */
+    public function gets(){
+        $params = $this->reqInfo->params();
+        if(isset($params["book_type_id"])){
+            return $this->getRepo()->getByTypeId($params["book_type_id"]);
+        }
+        return $this->getRepo()->gets($params);
+    }
+
+
+    // internal function
+
+    public function beforeAction(){
+        $this->setRepo(new EBookRepo());
+        $this->getRepo()->setDB(MedooFactory::getInstance());
+    }
+
     public function isHasPermission($category_id){
         $auth_account = $this->reqInfo->getAuthAccount();
         $catPermissions = AccountPermission::getCatPermission($auth_account["account_id"]);
         return in_array($category_id, $catPermissions);
+    }
+
+    /**
+     * @return EBookRepo
+     */
+    public function getRepo()
+    {
+        return $this->repo;
+    }
+
+    /**
+     * @param EBookRepo $repo
+     */
+    public function setRepo($repo)
+    {
+        $this->repo = $repo;
     }
 }

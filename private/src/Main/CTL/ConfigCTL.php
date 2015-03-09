@@ -28,6 +28,19 @@ class ConfigCTL extends BaseCTL {
         }
     }
 
+    /**
+     * @PUT
+     */
+    public function update(){
+        $params = $this->getReqInfo()->params();
+        if(count($params) > 0){
+            return $this->getRepo()->update($params);
+        }
+        else {
+            return [];
+        }
+    }
+
     // internal function
     private $repo;
 
