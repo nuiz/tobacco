@@ -5,6 +5,7 @@
  * Date: 7/16/14
  * Time: 5:28 PM
  */
+header('Access-Control-Allow-Origin: *');
 
 require_once 'bootstrap.php';
 
