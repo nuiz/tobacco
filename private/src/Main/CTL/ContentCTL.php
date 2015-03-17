@@ -187,7 +187,7 @@ class ContentCTL extends BaseCTL {
     public function edit(){
         $type = $this->reqInfo->param("content_type");
         if($type == "book"){
-            return $this->_editHtml();
+            return $this->_editBook();
         }
         else if($type == "video"){
             return $this->_editVideo();
@@ -197,33 +197,27 @@ class ContentCTL extends BaseCTL {
         }
     }
 
-    public function _editHtml(){
-        $id = $this->reqInfo->urlParam('id');
-        $params = $this->reqInfo->params();
-
-        $old = $this->_get($id);
-
-        $update = ArrayHelper::filterKey(["content_name", "category_id", "content_text"], $params);
-
-        $db = MedooFactory::getInstance();
-        $db->pdo->beginTransaction();
-
-        $db->update($this->table, $update, ["content_id"=> $id]);
-
-        if($old["content_type"] == "book"){
-            $updateHtml = ArrayHelper::filterKey(["content_book"], $params);
-            $db->update($this->table_book, $updateHtml, ["content_id"=> $id]);
-            $db->pdo->commit();
-        }
-
-        return $this->_get($id);
-    }
-
     public function _editVideo(){
         $id = $this->reqInfo->urlParam('id');
         $params = $this->reqInfo->params();
 
-        $old = $this->_get($id);
+//        $old = $this->_get($id);
+
+        $update = ArrayHelper::filterKey(["content_name", "category_id", "content_text"], $params);
+
+        $db = MedooFactory::getInstance();
+
+        $db->update($this->table, $update, ["content_id"=> $id]);
+
+        return $this->_get($id);
+    }
+
+    public function _editBook(){
+        $id = $this->reqInfo->urlParam('id');
+        $params = $this->reqInfo->params();
+        $files = $this->reqInfo->files();
+
+//        $old = $this->_get($id);
 
         $update = ArrayHelper::filterKey(["content_name", "category_id", "content_text"], $params);
 
@@ -232,21 +226,94 @@ class ContentCTL extends BaseCTL {
 
         $db->update($this->table, $update, ["content_id"=> $id]);
 
-        if($old["content_type"] == "video"){
-            $updateVideo = [];
-            $video = FileUpload::load($this->reqInfo->file("video"));
-            if($video->isUploaded()){
-                $des = "public/video/".$video->generateName(true);
-                $video->move($des);
+        $updateBook = ArrayHelper::filterKey(['book_author', 'book_date', 'book_publishing_house', 'book_type_id' ], $params);
 
-                $updateVideo["video_path"] = $des;
+        if(isset($files['book'])){
+            $fileUpload = FileUpload::load($files['book']);
+            if($fileUpload->isUploaded()){
+                $newName = $fileUpload->generateName(true);
+                $fileUpload->move("public/book/".$newName);
+                $update['book_path'] = $newName;
             }
-
-            $db->update($this->table_video, $updateVideo, ["content_id"=> $id]);
-            $db->pdo->commit();
         }
 
+        if(isset($files['book_cover'])){
+            $fileUpload = FileUpload::load($files['book_cover']);
+            if($fileUpload->isUploaded()){
+                $newName = $fileUpload->generateName(true);
+                $fileUpload->move("public/book_cover/".$newName);
+                $update['book_cover_path'] = $newName;
+            }
+        }
+
+        $db->update($this->table_book, $updateBook, ["content_id"=> $id]);
+        $db->pdo->commit();
+
         return $this->_get($id);
+    }
+
+    /**
+     * @POST
+     * @uri /[i:id]/video
+     */
+    public function uploadVideo(){
+        function insertVideo($video, $thumb, $id, $db, $table_video){
+            $insertVideo = ["content_id"=> $id];
+            $video = FileUpload::load($video);
+            $name = $video->generateName(true);
+            $des = "public/video/".$name;
+            $video->move($des);
+            $insertVideo['video_path'] = $name;
+
+            $video_thumb = FileUpload::load($thumb);
+            $name = $video_thumb->generateName(true);
+            $des = "public/video_thumb/".$name;
+            $video_thumb->move($des);
+            $insertVideo['video_thumb_path'] = $name;
+
+            $db->insert($table_video, $insertVideo);
+        }
+
+        $id = $this->reqInfo->urlParam("id");
+        $db = MedooFactory::getInstance();
+        $db->pdo->beginTransaction();
+        foreach($_FILES["videos"]["name"] as $key=> $value){
+//                $videos[] = ["name"=> $_FILES["videos"]["name"][$key], "tmp_name"=> $_FILES["videos"]["tmp_name"][$key]];
+            insertVideo(["name"=> $_FILES["videos"]["name"][$key], "tmp_name"=> $_FILES["videos"]["tmp_name"][$key]],
+                ["name"=> $_FILES["videos_thumb"]["name"][$key], "tmp_name"=> $_FILES["videos_thumb"]["tmp_name"][$key]], $id, $db, $this->table_video);
+        }
+        $db->pdo->commit();
+
+        return ["success"=> true];
+    }
+
+    /**
+     * @DELETE
+     * @uri /[i:id]/video
+     */
+    public function deleteVideo(){
+        $list_id = $this->getReqInfo()->input("list_id");
+        $content_id = $this->getReqInfo()->urlParam("id");
+        $db = MedooFactory::getInstance();
+        foreach($list_id as $key=> $id){
+            $condition = ["content_id"=> $content_id];
+            $c = $db->count($this->table_video, "*", $condition);
+            if($c <= 1){
+                break;
+            }
+            $condition = ["AND"=> ["content_id"=> $content_id, "id"=> $id]];
+            $db->delete($this->table_video, $condition);
+        }
+
+        return ["success"=> true];
+    }
+
+    public function uploadAttachFile(){
+
+    }
+
+    public function deleteAttachFile(){
+
     }
 
     // internal function
@@ -262,14 +329,16 @@ class ContentCTL extends BaseCTL {
 
     public function build(&$item){
         $db = MedooFactory::getInstance();
-        $item["book_url"] = URL::absolute("/public/book/".$item["book_path"]);
-        $item["book_cover_url"] = URL::absolute("/public/book_cover/".$item["book_cover_path"]);
         if($item["content_type"]=="video"){
             $item["videos"] = $db->select($this->table_video, "*", ["content_id"=> $item["content_id"]]);
             foreach($item["videos"] as $key=> $value){
                 $item["videos"][$key]["video_url"] = URL::absolute("/public/video/".$item["videos"][$key]["video_path"]);
                 $item["videos"][$key]["video_thumb_url"] = URL::absolute("/public/video_thumb/".$item["videos"][$key]["video_thumb_path"]);
             }
+        }
+        else {
+            $item["book_url"] = URL::absolute("/public/book/".$item["book_path"]);
+            $item["book_cover_url"] = URL::absolute("/public/book_cover/".$item["book_cover_path"]);
         }
         $item["attach_files"] = $db->select($this->table_attach_file, "*", ["content_id"=> $item["content_id"]]);
         foreach($item["attach_files"] as $key=> $value){

@@ -10,15 +10,16 @@ namespace Main\CTL;
 use Main\DB\Medoo\MedooFactory;
 use Main\Helper\ArrayHelper;
 use Main\Repository\FAQRepo;
+use Main\Repository\KmcenterRepo;
 use Main\View\JsonView;
 
 /**
  * @Restful
- * @uri /faq
+ * @uri /kmcenter
  */
-class FAQCTL extends BaseCTL {
+class KmcenterCTL extends BaseCTL {
     /**
-     * @var FAQRepo $repo;
+     * @var KmcenterRepo $repo;
      */
     protected $repo;
 
@@ -31,13 +32,21 @@ class FAQCTL extends BaseCTL {
     }
 
     /**
+     * @GET
+     * @uri /[i:id]
+     */
+    public function get(){
+        return new JsonView($this->getRepo()->_get($this->getReqInfo()->urlParam("id")));
+    }
+
+    /**
      * @POST
      */
     public function add(){
         $params = $this->getReqInfo()->params();
-        $insert = ArrayHelper::filterKey(['faq_question', 'faq_answer'], $params);
-
-        return $this->getRepo()->add($insert);
+        $insert = ArrayHelper::filterKey(['kmcenter_name', 'kmcenter_description'], $params);
+        $files = $this->getReqInfo()->files();
+        return $this->getRepo()->add($insert, $files);
     }
 
     /**
@@ -46,11 +55,12 @@ class FAQCTL extends BaseCTL {
      */
     public function edit(){
         $params = $this->getReqInfo()->params();
-        $insert = ArrayHelper::filterKey(['faq_question', 'faq_answer'], $params);
+        $insert = ArrayHelper::filterKey(['kmcenter_name', 'kmcenter_description'], $params);
+        $files = $this->getReqInfo()->files();
 
         $id = $this->getReqInfo()->urlParam("id");
 
-        return $this->getRepo()->edit($id, $insert);
+        return $this->getRepo()->edit($id, $insert, $files);
     }
 
     /**
@@ -64,13 +74,13 @@ class FAQCTL extends BaseCTL {
 
     // dependency injection before action
     public function beforeAction(){
-        $this->setRepo(new FAQRepo());
+        $this->setRepo(new KmcenterRepo());
         $this->getRepo()->setDB(MedooFactory::getInstance());
     }
 
     //internal function
     /**
-     * @return FAQRepo
+     * @return KmcenterRepo
      */
     public function getRepo()
     {
@@ -78,7 +88,7 @@ class FAQCTL extends BaseCTL {
     }
 
     /**
-     * @param FAQRepo $repo
+     * @param KmcenterRepo $repo
      */
     public function setRepo($repo)
     {

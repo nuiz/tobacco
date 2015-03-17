@@ -138,7 +138,7 @@ class AccountCTL extends BaseCTL {
     public function listUser(){
         $params = $this->reqInfo->params();
         $params["url"] = URL::absolute("/account/user");
-        $params["field"] = ["account_id", "username"];
+        $params["field"] = ["account_id", "username", "firstname", "lastname"];
         $params["where"] = [
             "level_id"=> 0,
             "ORDER"=> "account_id DESC",

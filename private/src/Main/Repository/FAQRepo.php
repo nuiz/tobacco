@@ -43,6 +43,13 @@ class FAQRepo {
         return $this->_get($id);
     }
 
+    public function edit($id, $params){
+        $update = ArrayHelper::filterKey(['faq_question', 'faq_answer'], $params);
+        $id = $this->db->update($this->table, $update, ["faq_id"=> $id]);
+
+        return $this->_get($id);
+    }
+
     public function gets($params){
         $params["url"] = URL::absolute("/faq");
         $params["field"] = "*";
@@ -54,7 +61,12 @@ class FAQRepo {
         return $listResponse;
     }
 
+    public function delete($id){
+        $this->db->delete($this->table, ["faq_id"=> $id]);
+        return ["success"=> true];
+    }
+
     public function _get($id){
-        return $this->db->select($this->table, "*", ["faq_id"=> $id]);
+        return $this->db->get($this->table, "*", ["faq_id"=> $id]);
     }
 }

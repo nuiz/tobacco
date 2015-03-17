@@ -9,16 +9,16 @@
 namespace Main\CTL;
 use Main\DB\Medoo\MedooFactory;
 use Main\Helper\ArrayHelper;
-use Main\Repository\FAQRepo;
+use Main\Repository\GuruRepo;
 use Main\View\JsonView;
 
 /**
  * @Restful
- * @uri /faq
+ * @uri /guru
  */
-class FAQCTL extends BaseCTL {
+class GuruCTL extends BaseCTL {
     /**
-     * @var FAQRepo $repo;
+     * @var GuruRepo $repo;
      */
     protected $repo;
 
@@ -31,13 +31,31 @@ class FAQCTL extends BaseCTL {
     }
 
     /**
+     * @GET
+     * @uri /category
+     */
+    public function getCats(){
+        $params = $this->getReqInfo()->params();
+        return new JsonView($this->getRepo()->getCats($params));
+    }
+
+    /**
+     * @GET
+     * @uri /[i:id]
+     */
+    public function get(){
+        $id = $this->getReqInfo()->urlParam("id");
+
+        return new JsonView($this->getRepo()->_get($id));
+    }
+
+    /**
      * @POST
      */
     public function add(){
         $params = $this->getReqInfo()->params();
-        $insert = ArrayHelper::filterKey(['faq_question', 'faq_answer'], $params);
 
-        return $this->getRepo()->add($insert);
+        return $this->getRepo()->add($params);
     }
 
     /**
@@ -46,11 +64,10 @@ class FAQCTL extends BaseCTL {
      */
     public function edit(){
         $params = $this->getReqInfo()->params();
-        $insert = ArrayHelper::filterKey(['faq_question', 'faq_answer'], $params);
 
         $id = $this->getReqInfo()->urlParam("id");
 
-        return $this->getRepo()->edit($id, $insert);
+        return $this->getRepo()->edit($id, $params);
     }
 
     /**
@@ -64,13 +81,13 @@ class FAQCTL extends BaseCTL {
 
     // dependency injection before action
     public function beforeAction(){
-        $this->setRepo(new FAQRepo());
+        $this->setRepo(new GuruRepo());
         $this->getRepo()->setDB(MedooFactory::getInstance());
     }
 
     //internal function
     /**
-     * @return FAQRepo
+     * @return GuruRepo
      */
     public function getRepo()
     {
@@ -78,7 +95,7 @@ class FAQCTL extends BaseCTL {
     }
 
     /**
-     * @param FAQRepo $repo
+     * @param GuruRepo $repo
      */
     public function setRepo($repo)
     {
