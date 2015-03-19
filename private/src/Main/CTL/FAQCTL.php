@@ -31,6 +31,15 @@ class FAQCTL extends BaseCTL {
     }
 
     /**
+     * @GET
+     * @uri /[i:id]
+     */
+    public function get(){
+        $id = $this->getReqInfo()->urlParam("id");
+        return new JsonView($this->getRepo()->_get($id));
+    }
+
+    /**
      * @POST
      */
     public function add(){

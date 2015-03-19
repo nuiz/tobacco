@@ -203,7 +203,7 @@ class ContentCTL extends BaseCTL {
 
 //        $old = $this->_get($id);
 
-        $update = ArrayHelper::filterKey(["content_name", "category_id", "content_text"], $params);
+        $update = ArrayHelper::filterKey(["content_name", "category_id", "content_description"], $params);
 
         $db = MedooFactory::getInstance();
 
@@ -219,7 +219,7 @@ class ContentCTL extends BaseCTL {
 
 //        $old = $this->_get($id);
 
-        $update = ArrayHelper::filterKey(["content_name", "category_id", "content_text"], $params);
+        $update = ArrayHelper::filterKey(["content_name", "category_id", "content_description"], $params);
 
         $db = MedooFactory::getInstance();
         $db->pdo->beginTransaction();
