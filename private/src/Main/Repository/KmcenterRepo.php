@@ -83,6 +83,7 @@ class KmcenterRepo {
             "LIMIT"=> 1000
         ];
         $listResponse = ListDAO::gets($this->table, $params);
+        $this->_builds($listResponse['data']);
         return $listResponse;
     }
 

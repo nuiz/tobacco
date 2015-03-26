@@ -85,6 +85,7 @@ class AccountCTL extends BaseCTL {
         AccountPermission::requirePermission($user, [AccountPermission::ID_CLUSTER, AccountPermission::ID_CLUSTER_IT, AccountPermission::ID_SUPER_ADMIN]);
 
         $db = MedooFactory::getInstance();
+        $params['cluster_id'] = $user->account_id;
 
         if($db->count($this->table, ["username"=> $params["username"]]) > 0){
             return [
@@ -124,9 +125,15 @@ class AccountCTL extends BaseCTL {
         $params = $this->reqInfo->params();
         $params["url"] = URL::absolute("/account/writer");
         $params["where"] = [
-            "level_id"=> 4,
+            "AND"=> [
+                "level_id"=> 4,
+            ],
             "ORDER"=> "account_id DESC"
         ];
+        $cluster_id = $this->getReqInfo()->param("cluster_id");
+        if(!is_null($cluster_id)){
+            $params["where"]["AND"]["cluster_id"] = $cluster_id;
+        }
         $listResponse = ListDAO::gets($this->table, $params);
         return new JsonView($listResponse);
     }
@@ -157,7 +164,10 @@ class AccountCTL extends BaseCTL {
         $params = $this->reqInfo->params();
         $db = MedooFactory::getInstance();
 
-        $id = $db->update($this->table, ["level_id"=> 4], ["account_id"=> $params["account_id"]]);
+        $user = $this->getReqInfo()->getAuthAccount();
+        AccountPermission::requirePermission($user, [AccountPermission::ID_CLUSTER, AccountPermission::ID_CLUSTER_IT, AccountPermission::ID_SUPER_ADMIN]);
+
+        $id = $db->update($this->table, ["level_id"=> 4, "cluster_id"=> $user['account_id']], ["account_id"=> $params["account_id"]]);
 
         $item = $this->_get($params["account_id"]);
         return new JsonView($item);

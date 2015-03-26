@@ -66,6 +66,10 @@ class ContentCTL extends BaseCTL {
         $db->pdo->beginTransaction();
 
         $insert["account_id"] = $user["account_id"];
+
+        $insert["created_at"] = time();
+        $insert["updated_at"] = time();
+
         $id = $db->insert($this->table, $insert);
 
         if($insert["content_type"] == "book"){
