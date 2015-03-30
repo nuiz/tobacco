@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 30, 2015 at 01:13 PM
+-- Generation Time: Mar 31, 2015 at 12:23 AM
 -- Server version: 5.6.21
 -- PHP Version: 5.6.3
 
@@ -273,7 +273,10 @@ CREATE TABLE IF NOT EXISTS `config_system` (
 
 INSERT INTO `config_system` (`config_name`, `config_value`) VALUES
 ('extension_upload', 'jpeg,png,mp4'),
-('upload_max_filesize', '40M');
+('maxsize_attach_file_upload', '40M'),
+('maxsize_book_upload', '40M'),
+('maxsize_image_upload', '40M'),
+('maxsize_video_upload', '40M');
 
 -- --------------------------------------------------------
 
@@ -290,7 +293,7 @@ CREATE TABLE IF NOT EXISTS `content` (
   `content_type` varchar(50) NOT NULL,
   `created_at` int(11) NOT NULL,
   `updated_at` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `content`
@@ -314,7 +317,9 @@ INSERT INTO `content` (`content_id`, `content_name`, `content_description`, `acc
 (21, 'AAAAaaaa', 'aaaaa', 1, 1, 'book', 1427710765, 1427710765),
 (22, 'AAAaaaa', 'aaaaa', 1, 1, 'book', 1427711007, 1427711007),
 (26, 'bbb', 'bbb', 1, 1, 'book', 1427711279, 1427711279),
-(32, 'saa', 'aaa', 1, 1, 'book', 1427711725, 1427711725);
+(32, 'saa', 'aaa', 1, 1, 'book', 1427711725, 1427711725),
+(33, 'a1', 'a2', 1, 1, 'book', 1427743435, 1427743435),
+(39, 'saas', 'aaa', 1, 1, 'book', 1427747281, 1427747281);
 
 -- --------------------------------------------------------
 
@@ -369,7 +374,9 @@ INSERT INTO `content_book` (`content_id`, `book_path`, `book_author`, `book_date
 (11, 'file54fe0208ca0c3.pdf', NULL, '2015-03-02', NULL, 0, 'file54fe0208ca4ab.png', ''),
 (13, 'file54fe0243e099f.pdf', 'แสง', '2015-03-19', 'ccccc', 1, 'file54fe0243e116f.jpg', ''),
 (18, 'file55192190f2279.pdf', NULL, '2015-03-10', NULL, 1, 'file55192190f2662.jpg', NULL),
-(32, 'file551926edc1359.pdf', '', '2015-03-04', 'ddddd', 2, 'file551926edc1b29.jpg', '["\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 4","\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 2","\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 3"]');
+(32, 'file551926edc1359.pdf', '', '2015-03-04', 'ddddd', 2, 'file551926edc1b29.jpg', '["\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 5","\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 1","\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 3"]'),
+(33, 'file5519a2cba9e26.pdf', NULL, '2015-03-03', NULL, 2, 'file5519a2cbaa20e.jpg', '["\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 1","\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 2"]'),
+(39, 'file5519b1d109f53.pdf', 'aaaa', '2015-03-04', 'ab', 2, 'file5519b1d10a723.jpg', '["\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 4","\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 2"]');
 
 -- --------------------------------------------------------
 
@@ -490,17 +497,17 @@ CREATE TABLE IF NOT EXISTS `kmcenter` (
 --
 
 INSERT INTO `kmcenter` (`kmcenter_id`, `kmcenter_name`, `kmcenter_map_pic`, `kmcenter_description`) VALUES
-(5, 'ฝ่ายทรัพยากรบุคคล', 'file550a3c1ec26d6.jpg', 'รายละเอียดฝ่ายทรัพยากรบุคคล'),
-(6, 'สำนักงานการพิมพ์', 'file550a5160e1be5.jpg', 'รายละเอียดสำนักงานการพิมพ์'),
-(7, 'ฝ่ายวิจัยและพัฒนา', 'file550a517634b37.png', 'รายละเอียดฝ่ายวิจัยและพัฒนา'),
-(8, 'ฝ่ายใบยา', 'file550a5187e18e4.jpg', 'รายละเอียดฝ่ายใบยา'),
-(9, 'โรงงานยาสูบ 3', 'file550a51a5ee2eb.jpg', 'รายละเอียดโรงงานยาสูบ 3'),
-(10, 'โรงงานยาสูบ 4', 'file550a51bd67800.jpg', 'รายละเอียดโรงงานยาสูบ 4'),
-(11, 'โรงงานยาสูบ 5', 'file550a51cf1960b.jpg', 'รายละเอียดโรงงานยาสูบ 5'),
-(12, 'โรงงานยาสูบ 6', 'file550a51de108db.jpg', 'รายละเอียดโรงงานยาสูบ 6'),
-(13, 'สำนักกฎหมาย', 'file550a51fb03c63.jpg', 'รายละเอียดสำนักกฎหมาย'),
-(14, 'สำนักเทคโนโลยีสารสนเทศ', 'file550a5212c9dc5.jpg', 'รายละเอียดสำนักเทคโนโลยีสารสนเทศ'),
-(15, 'โรงพยาบาลโรงงานยาสูบ', 'file550a524b8d9e3.jpg', 'รายละเอียดโรงพยาบาลโรงงานยาสูบ');
+(5, 'ฝ่ายทรัพยากรบุคคล', 'file5519cba5c2187.jpg', 'รายละเอียดฝ่ายทรัพยากรบุคคล'),
+(6, 'สำนักงานการพิมพ์', 'file5519cb9c5e995.png', 'รายละเอียดสำนักงานการพิมพ์'),
+(7, 'ฝ่ายวิจัยและพัฒนา', 'file5519cb92b36cd.jpg', 'รายละเอียดฝ่ายวิจัยและพัฒนา'),
+(8, 'ฝ่ายใบยา', 'file5519cb7cd5c9a.png', 'รายละเอียดฝ่ายใบยา'),
+(9, 'โรงงานยาสูบ 3', 'file5519cb73094e0.jpg', 'รายละเอียดโรงงานยาสูบ 3'),
+(10, 'โรงงานยาสูบ 4', 'file5519cb689c21d.png', 'รายละเอียดโรงงานยาสูบ 4'),
+(11, 'โรงงานยาสูบ 5', 'file5519cb5cb4de4.jpg', 'รายละเอียดโรงงานยาสูบ 5'),
+(12, 'โรงงานยาสูบ 6', 'file5519cb4e5ef97.jpg', 'รายละเอียดโรงงานยาสูบ 6'),
+(13, 'สำนักกฎหมาย', 'file5519cb2fe06e9.jpg', 'รายละเอียดสำนักกฎหมาย'),
+(14, 'สำนักเทคโนโลยีสารสนเทศ', 'file5519cb266fc03.jpg', 'รายละเอียดสำนักเทคโนโลยีสารสนเทศ'),
+(15, 'โรงพยาบาลโรงงานยาสูบ', 'file5519c922df344.png', 'รายละเอียดโรงพยาบาลโรงงานยาสูบ');
 
 -- --------------------------------------------------------
 
@@ -665,7 +672,7 @@ MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=121;
 -- AUTO_INCREMENT for table `content`
 --
 ALTER TABLE `content`
-MODIFY `content_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=33;
+MODIFY `content_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=40;
 --
 -- AUTO_INCREMENT for table `content_attach_file`
 --
