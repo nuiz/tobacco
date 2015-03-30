@@ -73,7 +73,7 @@ class ContentCTL extends BaseCTL {
         $id = $db->insert($this->table, $insert);
 
         if($insert["content_type"] == "book"){
-            $insertBook = ArrayHelper::filterKey(["book_author", "book_publishing_house", "book_date", "book_type_id"], $params);
+            $insertBook = ArrayHelper::filterKey(["book_author", "book_publishing_house", "book_date", "book_type_id", "book_places"], $params);
             $insertBook["content_id"] = $id;
 
             $book = FileUpload::load($this->reqInfo->file("book"));
@@ -88,14 +88,21 @@ class ContentCTL extends BaseCTL {
             $book_cover->move($des);
             $insertBook['book_cover_path'] = $name;
 
+            if(isset($insertBook['book_places'])){
+                $insertBook['(JSON)book_places'] = $insertBook['book_places'];
+                unset($insertBook['book_places']);
+            }
+
             $db->insert($this->table_book, $insertBook);
             $db->pdo->commit();
         }
 
         if($insert["content_type"] == "video"){
+            function insertVideo($video, $thumb, $video_name, $id, $db, $table_video){
+                $seq = $db->max($table_video, "seq", ["content_id"=> $id]);
+                $seq += 1;
 
-            function insertVideo($video, $thumb, $id, $db, $table_video){
-                $insertVideo = ["content_id"=> $id];
+                $insertVideo = ["content_id"=> $id, "video_name"=> $video_name, "seq"=> $seq];
                 $video = FileUpload::load($video);
                 $name = $video->generateName(true);
                 $des = "public/video/".$name;
@@ -111,11 +118,18 @@ class ContentCTL extends BaseCTL {
                 $db->insert($table_video, $insertVideo);
             }
 
+            $cVideo = count($_FILES["videos"]["name"]);
+            if($cVideo != count($_FILES["videos_thumb"]["name"]) || $cVideo != count($params['videos_name'])){
+                return ResponseHelper::error("Video and name,thumb length not equals");
+            }
+
 //            $videos = [];
             foreach($_FILES["videos"]["name"] as $key=> $value){
 //                $videos[] = ["name"=> $_FILES["videos"]["name"][$key], "tmp_name"=> $_FILES["videos"]["tmp_name"][$key]];
                 insertVideo(["name"=> $_FILES["videos"]["name"][$key], "tmp_name"=> $_FILES["videos"]["tmp_name"][$key]],
-                    ["name"=> $_FILES["videos_thumb"]["name"][$key], "tmp_name"=> $_FILES["videos_thumb"]["tmp_name"][$key]], $id, $db, $this->table_video);
+                    ["name"=> $_FILES["videos_thumb"]["name"][$key], "tmp_name"=> $_FILES["videos_thumb"]["tmp_name"][$key]],
+                    $params['videos_name'][$key]
+                    , $id, $db, $this->table_video);
             }
 
             $db->pdo->commit();
@@ -133,9 +147,14 @@ class ContentCTL extends BaseCTL {
             $db->insert($table_attach_file, $insertVideo);
         }
 
-        foreach($_FILES["attach_files"]["name"] as $key=> $value){
-            insertAttachFile(["name"=> $_FILES["attach_files"]["name"][$key], "tmp_name"=> $_FILES["attach_files"]["tmp_name"][$key]],
-                $id, $db, $this->table_attach_file);
+        if(isset($_FILES["attach_files"])
+            && count($_FILES["attach_files"]["name"]) > 0
+            && !empty($files['kmcenter_map_pic']['tmp_name']))
+        {
+            foreach($_FILES["attach_files"]["name"] as $key=> $value){
+                insertAttachFile(["name"=> $_FILES["attach_files"]["name"][$key], "tmp_name"=> $_FILES["attach_files"]["tmp_name"][$key]],
+                    $id, $db, $this->table_attach_file);
+            }
         }
 
         $item = $this->_get($id);
@@ -230,7 +249,15 @@ class ContentCTL extends BaseCTL {
 
         $db->update($this->table, $update, ["content_id"=> $id]);
 
-        $updateBook = ArrayHelper::filterKey(['book_author', 'book_date', 'book_publishing_house', 'book_type_id' ], $params);
+        $updateBook = ArrayHelper::filterKey(['book_author', 'book_date', 'book_publishing_house', 'book_type_id', 'book_places'], $params);
+
+        return [
+            'error'=> $updateBook
+        ];
+
+        if(isset($updateBook['book_places'])){
+            $updateBook['book_places'] = json_encode($updateBook['book_places']);
+        }
 
         if(isset($files['book'])){
             $fileUpload = FileUpload::load($files['book']);
@@ -261,8 +288,11 @@ class ContentCTL extends BaseCTL {
      * @uri /[i:id]/video
      */
     public function uploadVideo(){
-        function insertVideo($video, $thumb, $id, $db, $table_video){
-            $insertVideo = ["content_id"=> $id];
+        function insertVideo($video, $thumb, $video_name,$id, $db, $table_video){
+            $seq = $db->max($table_video, "seq", ["content_id"=> $id]);
+            $seq += 1;
+
+            $insertVideo = ["content_id"=> $id, "seq"=> $seq, "video_name"=> $video_name];
             $video = FileUpload::load($video);
             $name = $video->generateName(true);
             $des = "public/video/".$name;
@@ -278,13 +308,22 @@ class ContentCTL extends BaseCTL {
             $db->insert($table_video, $insertVideo);
         }
 
+        $params = $this->getReqInfo()->params();
+
+        $cVideo = count($_FILES["videos"]["name"]);
+        if($cVideo != count($_FILES["videos_thumb"]["name"]) || $cVideo != count($params['videos_name'])){
+            return ResponseHelper::error("Video and name,thumb length not equals");
+        }
+
         $id = $this->reqInfo->urlParam("id");
         $db = MedooFactory::getInstance();
         $db->pdo->beginTransaction();
         foreach($_FILES["videos"]["name"] as $key=> $value){
 //                $videos[] = ["name"=> $_FILES["videos"]["name"][$key], "tmp_name"=> $_FILES["videos"]["tmp_name"][$key]];
             insertVideo(["name"=> $_FILES["videos"]["name"][$key], "tmp_name"=> $_FILES["videos"]["tmp_name"][$key]],
-                ["name"=> $_FILES["videos_thumb"]["name"][$key], "tmp_name"=> $_FILES["videos_thumb"]["tmp_name"][$key]], $id, $db, $this->table_video);
+                ["name"=> $_FILES["videos_thumb"]["name"][$key], "tmp_name"=> $_FILES["videos_thumb"]["tmp_name"][$key]],
+                $params['videos_name'][$key],
+                $id, $db, $this->table_video);
         }
         $db->pdo->commit();
 
@@ -312,6 +351,22 @@ class ContentCTL extends BaseCTL {
         return ["success"=> true];
     }
 
+    /**
+     * @POST
+     * @uri /[i:id]/video/sort
+     */
+    public function sortVideo(){
+        $list_id = $this->getReqInfo()->input("list_id");
+        $content_id = $this->getReqInfo()->urlParam("id");
+        $db = MedooFactory::getInstance();
+        foreach($list_id as $key=> $id){
+            $condition = ["AND"=> ["content_id"=> $content_id, "id"=> $id]];
+            $db->update($this->table_video, ["seq"=> $key + 1], $condition);
+        }
+
+        return ["success"=> true];
+    }
+
     public function uploadAttachFile(){
 
     }
@@ -334,7 +389,7 @@ class ContentCTL extends BaseCTL {
     public function build(&$item){
         $db = MedooFactory::getInstance();
         if($item["content_type"]=="video"){
-            $item["videos"] = $db->select($this->table_video, "*", ["content_id"=> $item["content_id"]]);
+            $item["videos"] = $db->select($this->table_video, "*", ["content_id"=> $item["content_id"], "ORDER"=> "seq ASC"]);
             foreach($item["videos"] as $key=> $value){
                 $item["videos"][$key]["video_url"] = URL::absolute("/public/video/".$item["videos"][$key]["video_path"]);
                 $item["videos"][$key]["video_thumb_url"] = URL::absolute("/public/video_thumb/".$item["videos"][$key]["video_thumb_path"]);
@@ -343,6 +398,7 @@ class ContentCTL extends BaseCTL {
         else {
             $item["book_url"] = URL::absolute("/public/book/".$item["book_path"]);
             $item["book_cover_url"] = URL::absolute("/public/book_cover/".$item["book_cover_path"]);
+            $item["book_places"] = json_decode($item["book_places"]);
         }
         $item["attach_files"] = $db->select($this->table_attach_file, "*", ["content_id"=> $item["content_id"]]);
         foreach($item["attach_files"] as $key=> $value){

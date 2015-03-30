@@ -131,7 +131,7 @@ class AccountCTL extends BaseCTL {
             "ORDER"=> "account_id DESC"
         ];
         $cluster_id = $this->getReqInfo()->param("cluster_id");
-        if(!is_null($cluster_id)){
+        if(!empty($cluster_id)){
             $params["where"]["AND"]["cluster_id"] = $cluster_id;
         }
         $listResponse = ListDAO::gets($this->table, $params);

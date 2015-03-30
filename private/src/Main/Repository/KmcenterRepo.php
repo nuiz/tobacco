@@ -40,7 +40,7 @@ class KmcenterRepo {
     }
 
     public function add($params, $files){
-        $insert = ArrayHelper::filterKey(['kmcenter_name', 'kmcenter_desciption'], $params);
+        $insert = ArrayHelper::filterKey(['kmcenter_name', 'kmcenter_description'], $params);
         if(!isset($files['kmcenter_map_pic'])
             || !is_array($files['kmcenter_map_pic'])
             || count($files['kmcenter_map_pic']) == 0
