@@ -42,6 +42,22 @@ class CategoryCTL extends BaseCTL {
 
     /**
      * @GET
+     * @uri /all
+     */
+    public function getsAll(){
+        $params = $this->reqInfo->params();
+        $params["url"] = URL::absolute("/category");
+        $params["where"] = [
+            "ORDER"=> "category_id DESC"
+        ];
+        $params["limit"] = 200;
+
+        $listResponse = ListDAO::gets($this->table, $params);
+        return new JsonView($listResponse);
+    }
+
+    /**
+     * @GET
      * @uri /tree
      */
     public function getTree(){

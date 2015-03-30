@@ -60,7 +60,7 @@ class KmcenterRepo {
     }
 
     public function edit($id, $params, $files){
-        $update = ArrayHelper::filterKey(['kmcenter_name', 'kmcenter_name'], $params);
+        $update = ArrayHelper::filterKey(['kmcenter_name', 'kmcenter_description'], $params);
         if(isset($files['kmcenter_map_pic'])){
             $mapUploaded = FileUpload::load($files['kmcenter_map_pic']);
             if($mapUploaded->isUploaded()){

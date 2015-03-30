@@ -71,6 +71,11 @@ class GuruRepo {
             "ORDER"=> "guru_id DESC",
             "LIMIT"=> 1000
         ];
+
+        if(isset($params["guru_cat_id"]) && !empty($params['guru_cat_id'])){
+            $params["where"]['guru.guru_cat_id'] = $params["guru_cat_id"];
+        }
+
         $listResponse = ListDAO::gets(self::TABLE_GURU, $params);
         $this->_builds($listResponse['data']);
         return $listResponse;

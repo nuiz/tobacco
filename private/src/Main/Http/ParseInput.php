@@ -80,6 +80,13 @@ class ParseInput extends BaseCTL {
             }
         }
 
+        $arr = [];
+        foreach($data as $key=> $value){
+            $arr[] = $key."=".$value;
+        }
+        $query = implode("&", $arr);
+        parse_str($query, $data);
+
         return ['data'=> $data, 'files'=> $files];
     }
 }

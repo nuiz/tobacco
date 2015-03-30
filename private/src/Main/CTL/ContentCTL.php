@@ -40,11 +40,9 @@ class ContentCTL extends BaseCTL {
         ];
         $params["field"]= ["*", "content.content_id"];
 
-        if(isset($params["parent_id"])){
-            $params["where"]["parent_id"] = $params["parent_id"];
+        if(isset($params["category_id"]) && !empty($params["category_id"])){
+            $params["where"]["content.category_id"] = $params["category_id"];
         }
-
-        $db = MedooFactory::getInstance();
 
         $listResponse = ListDAO::gets($this->table, $params);
         $this->builds($listResponse["data"]);
@@ -73,7 +71,7 @@ class ContentCTL extends BaseCTL {
         $id = $db->insert($this->table, $insert);
 
         if($insert["content_type"] == "book"){
-            $insertBook = ArrayHelper::filterKey(["book_author", "book_publishing_house", "book_date", "book_type_id", "book_places"], $params);
+            $insertBook = ArrayHelper::filterKey(["book_author", "book_publishing_house", "book_date", "book_type_id", "book_places"], $params);
             $insertBook["content_id"] = $id;
 
             $book = FileUpload::load($this->reqInfo->file("book"));
@@ -250,10 +248,6 @@ class ContentCTL extends BaseCTL {
         $db->update($this->table, $update, ["content_id"=> $id]);
 
         $updateBook = ArrayHelper::filterKey(['book_author', 'book_date', 'book_publishing_house', 'book_type_id', 'book_places'], $params);
-
-        return [
-            'error'=> $updateBook
-        ];
 
         if(isset($updateBook['book_places'])){
             $updateBook['book_places'] = json_encode($updateBook['book_places']);
