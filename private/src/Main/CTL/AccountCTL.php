@@ -122,6 +122,8 @@ class AccountCTL extends BaseCTL {
      * @uri /writer
      */
     public function listWriter(){
+        $db = MedooFactory::getInstance();
+
         $params = $this->reqInfo->params();
         $params["url"] = URL::absolute("/account/writer");
         $params["where"] = [
@@ -135,6 +137,15 @@ class AccountCTL extends BaseCTL {
             $params["where"]["AND"]["cluster_id"] = $cluster_id;
         }
         $listResponse = ListDAO::gets($this->table, $params);
+//        foreach($listResponse['data'] as $key=> $value){
+//            $value['cluster'] = $db->get("account", "*", [
+//                "AND"=> [
+//                    "account_id"=> $value["cluster_id"],
+//                    "level_id"=> 3
+//                ]
+//            ]);
+//            //$listResponse['data'][$key] = $value;
+//        }
         return new JsonView($listResponse);
     }
 

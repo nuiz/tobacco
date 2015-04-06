@@ -35,7 +35,8 @@ class AccountService extends BaseService {
             throw new AccountServiceException();
         }
 
-        $accInsert = ArrayHelper::filterKey(['username', 'password', 'level'], $params);
+        $dtString = date('Y-m-d H:i:s');
+        $accInsert = ArrayHelper::filterKey(['username', 'password', 'level', 'created_at'=> $dtString, 'updated_at'=> $dtString], $params);
         $accInsert['status'] = 'pass';
 
         $db = MedooFactory::getInstance();

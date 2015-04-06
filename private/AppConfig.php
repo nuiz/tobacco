@@ -15,6 +15,7 @@ $configs = array(
         "site_url" => "",
         "share_url" => "",
         "directory" => dirname(__FILE__),
+        "timezone"=> "Asia/Bangkok",
         "view" => "default"
     ),
     "route"=> array(

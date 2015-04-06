@@ -13,13 +13,13 @@ use Main\AppConfig;
 
 class MedooFactory {
     /**
-     * @param \medoo[] $instances;
+     * @param Medoo[] $instances;
      */
     protected static $instances = [];
 
     /**
      * @param string $name
-     * @return \medoo
+     * @return Medoo
      */
     public static function getInstance($name = 'master'){
         if(!isset(self::$instances[$name])){

@@ -22,7 +22,16 @@ class UserWriterCTL extends BaseCTL {
      */
     public function get(){
         $id = $this->getReqInfo()->urlParam('id');
-        return $this->_get($id);
+        $item = $this->_get($id);
+//        $db = MedooFactory::getInstance();
+//        $item['cluster'] = $db->get("account", "*", [
+//            "AND"=> [
+//                "account_id"=> $item["cluster_id"],
+//                "level_id"=> 3
+//            ]
+//        ]);
+
+        return $item;
     }
 
     /**
