@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 31, 2015 at 12:23 AM
+-- Generation Time: Apr 07, 2015 at 02:45 AM
 -- Server version: 5.6.21
 -- PHP Version: 5.6.3
 
@@ -35,8 +35,8 @@ CREATE TABLE IF NOT EXISTS `account` (
   `firstname` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
   `cluster_id` int(11) DEFAULT NULL,
-  `created_at` int(11) NOT NULL,
-  `updated_at` int(11) NOT NULL
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8;
 
 --
@@ -44,38 +44,38 @@ CREATE TABLE IF NOT EXISTS `account` (
 --
 
 INSERT INTO `account` (`account_id`, `username`, `password`, `auth_token`, `level_id`, `firstname`, `lastname`, `cluster_id`, `created_at`, `updated_at`) VALUES
-(1, 'super_admin', '111111', '74a500a2eee1b8274dae468ddb4892fb', 1, 'superadmin', 'superadmin', NULL, 0, 0),
-(2, 'admin', '111111', 'dbf15f4586d616c706b1a0452b77c5a0', 2, 'admin', 'admin', NULL, 0, 0),
-(3, 'cluster_1', '123456', 'a516e21a009882f9dd3ea5064d614908', 3, 'cluster1', 'cluster1', NULL, 0, 0),
-(4, 'cluster_2', '111111', '', 3, 'cluster2', 'cluster2', NULL, 0, 0),
-(5, 'cluster_3', '111111', '', 3, 'cluster3', 'cluster3', NULL, 0, 0),
-(6, 'cluster_4', '111111', 'abe385a720287044eebb729f69aab0b8', 3, 'cluster4', 'cluster4', NULL, 0, 0),
-(7, 'clusteraaaa', '111111', '', 3, 'clusteraaaa', 'clusteraaaa', NULL, 0, 0),
-(12, 'test_user', '111111', '', 0, 'สุวิจักขณ์', 'บึงประเสริฐสุข', NULL, 0, 0),
-(13, 'test_user_0', '111111', '', 0, 'สุวิช', 'ดีมี', NULL, 0, 0),
-(14, 'test_user_1', '111111', '', 0, 'สุวิจักขณ์', 'สัภยาหงษ์สกุล', NULL, 0, 0),
-(15, 'test_user_2', '111111', '', 0, 'สกานต์', 'ลิ่มนิธิกานต์', NULL, 0, 0),
-(16, 'test_user_3', '111111', '', 0, 'ผกาพันธุ์', 'นุมาศ', NULL, 0, 0),
-(17, 'test_user_4', '111111', '', 0, 'พัชร์กันต์', 'อนันต์นฤนาถ', NULL, 0, 0),
-(18, 'test_user_5', '111111', '', 0, 'วิลาศิณี', 'เลียวสิริไพโรจน์', NULL, 0, 0),
-(19, 'test_user_6', '111111', '', 0, 'พิพัฒน์', 'พงศ์ไพจิตร', NULL, 0, 0),
-(20, 'test_user_7', '111111', '', 0, 'ชเยศ', 'จิตชาญวิชัย', NULL, 0, 0),
-(21, 'test_user_8', '111111', '', 0, 'สุนา', 'ดวงเพชร', NULL, 0, 0),
-(22, 'test_user_9', '111111', '', 0, 'สุชาติ', 'สุโขรัมย์', NULL, 0, 0),
-(23, 'test_user_10', '111111', '', 0, 'เสนม', 'แมนประโคน', NULL, 0, 0),
-(24, 'test_user_11', '111111', '', 0, 'วัชรากร', 'พันชน', NULL, 0, 0),
-(25, 'test_user_12', '111111', '', 0, 'สมโภช', 'กิยะแพทย์', NULL, 0, 0),
-(26, 'test_user_13', '111111', '', 0, 'เคือง', 'เป็นครบ', NULL, 0, 0),
-(50, 'test_user_37', '111111', '', 4, 'ธงชัย', 'ใจดี', 6, 0, 0),
-(51, 'test_user_38', '111111', '', 0, 'อนันต์', 'พลาสติก', NULL, 0, 0),
-(52, 'test_user_39', '111111', '', 0, 'พัชราภรณ์', 'จันทร์เหนือ', NULL, 0, 0),
-(53, 'test_user_40', '111111', '', 0, 'นนทนันท์', 'เมฆโปธิ', NULL, 0, 0),
-(54, 'test_user_41', '111111', '', 4, 'พีรพล', 'ออชัยธง', 3, 0, 0),
-(55, 'test_user_42', '111111', '', 0, 'อัญทิกา', 'ทาส้าว', NULL, 0, 0),
-(56, 'test_user_43', '111111', '', 0, 'ธีรพล', 'วงค์ลังกา', NULL, 0, 0),
-(57, 'test_user_44', '111111', '', 0, 'วรพงษ์', 'ศรีสุวรรณ์', NULL, 0, 0),
-(58, 'test_user_45', '111111', '', 0, 'ปฏิณญา', 'รัตนพงค์', NULL, 0, 0),
-(59, 'test_user_46', '111111', '', 0, 'ภานุมาศ', 'ประกายเพชร', NULL, 0, 0);
+(1, 'super_admin', '111111', '74a500a2eee1b8274dae468ddb4892fb', 1, 'superadmin', 'superadmin', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(2, 'admin', '111111', 'dbf15f4586d616c706b1a0452b77c5a0', 2, 'admin', 'admin', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(3, 'cluster_1', '123456', 'a516e21a009882f9dd3ea5064d614908', 3, 'cluster1', 'cluster1', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(4, 'cluster_2', '111111', '', 3, 'cluster2', 'cluster2', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(5, 'cluster_3', '111111', '', 3, 'cluster3', 'cluster3', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(6, 'cluster_4', '111111', 'abe385a720287044eebb729f69aab0b8', 3, 'cluster4', 'cluster4', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(7, 'clusteraaaa', '111111', '', 3, 'clusteraaaa', 'clusteraaaa', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(12, 'test_user', '111111', '', 0, 'สุวิจักขณ์', 'บึงประเสริฐสุข', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(13, 'test_user_0', '111111', '', 0, 'สุวิช', 'ดีมี', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(14, 'test_user_1', '111111', '', 0, 'สุวิจักขณ์', 'สัภยาหงษ์สกุล', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(15, 'test_user_2', '111111', '', 0, 'สกานต์', 'ลิ่มนิธิกานต์', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(16, 'test_user_3', '111111', '', 0, 'ผกาพันธุ์', 'นุมาศ', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(17, 'test_user_4', '111111', '', 0, 'พัชร์กันต์', 'อนันต์นฤนาถ', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(18, 'test_user_5', '111111', '', 0, 'วิลาศิณี', 'เลียวสิริไพโรจน์', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(19, 'test_user_6', '111111', '', 0, 'พิพัฒน์', 'พงศ์ไพจิตร', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(20, 'test_user_7', '111111', '', 0, 'ชเยศ', 'จิตชาญวิชัย', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(21, 'test_user_8', '111111', '', 0, 'สุนา', 'ดวงเพชร', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(22, 'test_user_9', '111111', '', 0, 'สุชาติ', 'สุโขรัมย์', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(23, 'test_user_10', '111111', '', 0, 'เสนม', 'แมนประโคน', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(24, 'test_user_11', '111111', '', 0, 'วัชรากร', 'พันชน', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(25, 'test_user_12', '111111', '', 0, 'สมโภช', 'กิยะแพทย์', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(26, 'test_user_13', '111111', '', 0, 'เคือง', 'เป็นครบ', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(50, 'test_user_37', '111111', '', 4, 'ธงชัย', 'ใจดี', 6, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(51, 'test_user_38', '111111', '', 0, 'อนันต์', 'พลาสติก', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(52, 'test_user_39', '111111', '', 0, 'พัชราภรณ์', 'จันทร์เหนือ', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(53, 'test_user_40', '111111', '', 0, 'นนทนันท์', 'เมฆโปธิ', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(54, 'test_user_41', '111111', '', 4, 'พีรพล', 'ออชัยธง', 3, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(55, 'test_user_42', '111111', '', 0, 'อัญทิกา', 'ทาส้าว', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(56, 'test_user_43', '111111', '', 0, 'ธีรพล', 'วงค์ลังกา', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(57, 'test_user_44', '111111', '', 0, 'วรพงษ์', 'ศรีสุวรรณ์', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(58, 'test_user_45', '111111', '', 0, 'ปฏิณญา', 'รัตนพงค์', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00'),
+(59, 'test_user_46', '111111', '', 0, 'ภานุมาศ', 'ประกายเพชร', NULL, '2015-02-10 10:25:00', '2015-02-10 10:25:00');
 
 -- --------------------------------------------------------
 
@@ -293,33 +293,15 @@ CREATE TABLE IF NOT EXISTS `content` (
   `content_type` varchar(50) NOT NULL,
   `created_at` int(11) NOT NULL,
   `updated_at` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `content`
 --
 
 INSERT INTO `content` (`content_id`, `content_name`, `content_description`, `account_id`, `category_id`, `content_type`, `created_at`, `updated_at`) VALUES
-(3, 'ทดสอบชื่อ', 'ทดสอบคำอธิบาย', 1, 2, 'book', 0, 0),
-(4, 'S-System', 'S-System S-System S-System', 1, 2, 'book', 0, 0),
-(5, 'I-Sherman', 'I-Sherman', 1, 2, 'book', 0, 0),
-(6, 'TDI', 'TDI', 1, 2, 'book', 0, 0),
-(7, 'aba', 'aba', 1, 2, 'book', 0, 0),
-(8, 'bc', 'bc', 1, 2, 'book', 0, 0),
-(9, 'IS', 'IS', 1, 2, 'book', 0, 0),
-(10, 'TD', 'TD', 1, 2, 'book', 0, 0),
-(11, 'aba2', 'aba2', 1, 2, 'book', 0, 0),
-(13, 'isb23', 'isb2', 1, 75, 'book', 0, 0),
-(17, 'TTT', 'TTTTTTT', 1, 3, 'video', 1427428940, 1427428940),
-(18, 'cvsd', 'vdsvdsvsdv', 1, 13, 'book', 1427710352, 1427710352),
-(19, 'ttt', 'ttttt', 1, 1, 'book', 1427710484, 1427710484),
-(20, 'test', 'asasass', 1, 1, 'book', 1427710744, 1427710744),
-(21, 'AAAAaaaa', 'aaaaa', 1, 1, 'book', 1427710765, 1427710765),
-(22, 'AAAaaaa', 'aaaaa', 1, 1, 'book', 1427711007, 1427711007),
-(26, 'bbb', 'bbb', 1, 1, 'book', 1427711279, 1427711279),
-(32, 'saa', 'aaa', 1, 1, 'book', 1427711725, 1427711725),
-(33, 'a1', 'a2', 1, 1, 'book', 1427743435, 1427743435),
-(39, 'saas', 'aaa', 1, 1, 'book', 1427747281, 1427747281);
+(1, 'ทดสอบ', 'ทดสอบ ทดสอบ ทดสอบ', 1, 3, 'video', 1428358870, 1428358870),
+(2, 'ทดสอบ ebook', 'ทดสอบ ebook', 1, 7, 'book', 1428359988, 1428359988);
 
 -- --------------------------------------------------------
 
@@ -332,14 +314,7 @@ CREATE TABLE IF NOT EXISTS `content_attach_file` (
   `content_id` int(11) NOT NULL,
   `file_name` varchar(255) NOT NULL,
   `file_path` varchar(255) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `content_attach_file`
---
-
-INSERT INTO `content_attach_file` (`id`, `content_id`, `file_name`, `file_path`) VALUES
-(1, 1, '1.docx', 'file54fd6ffe7bfa9.docx');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -363,20 +338,7 @@ CREATE TABLE IF NOT EXISTS `content_book` (
 --
 
 INSERT INTO `content_book` (`content_id`, `book_path`, `book_author`, `book_date`, `book_publishing_house`, `book_type_id`, `book_cover_path`, `book_places`) VALUES
-(3, 'file54fdf4ff219d2.pdf', NULL, '2013-03-19', NULL, 0, 'file54fdf4ff221a3.png', ''),
-(4, 'file54fdfbfa61e0c.pdf', NULL, '2014-02-06', NULL, 0, 'file54fdfbfa621f4.jpg', ''),
-(5, 'file54fdfc2e08ffe.pdf', NULL, '2015-03-03', NULL, 0, 'file54fdfc2e097ce.jpg', ''),
-(6, 'file54fe00162c733.pdf', NULL, '2015-03-08', NULL, 0, 'file54fe00162cb1b.JPG', ''),
-(7, 'file54fe014b4313a.pdf', NULL, '2015-03-01', NULL, 0, 'file54fe014b4390a.png', ''),
-(8, 'file54fe015e7c796.pdf', NULL, '2015-03-03', NULL, 0, 'file54fe015e7cb7e.jpg', ''),
-(9, 'file54fe017289b19.pdf', NULL, '2015-03-02', NULL, 0, 'file54fe017289f01.jpg', ''),
-(10, 'file54fe01892eb37.pdf', NULL, '2015-03-04', NULL, 0, 'file54fe01892ef1f.JPG', ''),
-(11, 'file54fe0208ca0c3.pdf', NULL, '2015-03-02', NULL, 0, 'file54fe0208ca4ab.png', ''),
-(13, 'file54fe0243e099f.pdf', 'แสง', '2015-03-19', 'ccccc', 1, 'file54fe0243e116f.jpg', ''),
-(18, 'file55192190f2279.pdf', NULL, '2015-03-10', NULL, 1, 'file55192190f2662.jpg', NULL),
-(32, 'file551926edc1359.pdf', '', '2015-03-04', 'ddddd', 2, 'file551926edc1b29.jpg', '["\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 5","\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 1","\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 3"]'),
-(33, 'file5519a2cba9e26.pdf', NULL, '2015-03-03', NULL, 2, 'file5519a2cbaa20e.jpg', '["\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 1","\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 2"]'),
-(39, 'file5519b1d109f53.pdf', 'aaaa', '2015-03-04', 'ab', 2, 'file5519b1d10a723.jpg', '["\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 4","\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 2"]');
+(2, 'file55230b34221eb.pdf', 'ทดสอบ ชื่อผู้แต่ง', '2015-02-16', 'ทดสอบ สำนักพิมพ์', 2, 'file55230b3422da3.jpg', '["\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 3","\\u0e2b\\u0e49\\u0e2d\\u0e07\\u0e2a\\u0e21\\u0e38\\u0e14 4"]');
 
 -- --------------------------------------------------------
 
@@ -391,17 +353,15 @@ CREATE TABLE IF NOT EXISTS `content_video` (
   `video_thumb_path` varchar(255) NOT NULL,
   `video_name` varchar(255) NOT NULL,
   `seq` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `content_video`
 --
 
 INSERT INTO `content_video` (`id`, `content_id`, `video_path`, `video_thumb_path`, `video_name`, `seq`) VALUES
-(28, 17, 'file5514d64c11449.mp4', 'file5514d64c12001.jpeg', 'Cityyy', 2),
-(29, 17, 'file5514d64c12fa2.mp4', 'file5514d64c21ded.jpeg', 'Diorrr', 3),
-(40, 17, 'file5514db06cc95d.mp4', 'file5514db06cd515.jpeg', '1111', 1),
-(41, 17, 'file5514db06ce4b6.mp4', 'file5514db06cf83e.jpeg', '222', 4);
+(1, 1, 'file552306d64aa9b.mp4', 'file552306d6546dd.jpeg', 'Adam Levine - Lost Stars', 1),
+(2, 1, 'file552306d654ead.mp4', 'file552306d65c3df.jpeg', 'Passenger - Let Her Go', 2);
 
 -- --------------------------------------------------------
 
@@ -413,16 +373,7 @@ CREATE TABLE IF NOT EXISTS `faq` (
 `faq_id` int(11) NOT NULL,
   `faq_question` varchar(255) NOT NULL,
   `faq_answer` text NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `faq`
---
-
-INSERT INTO `faq` (`faq_id`, `faq_question`, `faq_answer`) VALUES
-(1, 'คำถามมมมมม', 'คำตอบบบบบบ'),
-(2, 'test q 2', 'test a 2'),
-(5, 'ทดสอบ 222', 'ทดสอบบบบบบบบบ คำถามมม 22222');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -490,24 +441,7 @@ CREATE TABLE IF NOT EXISTS `kmcenter` (
   `kmcenter_name` varchar(255) NOT NULL,
   `kmcenter_map_pic` varchar(255) NOT NULL,
   `kmcenter_description` text NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `kmcenter`
---
-
-INSERT INTO `kmcenter` (`kmcenter_id`, `kmcenter_name`, `kmcenter_map_pic`, `kmcenter_description`) VALUES
-(5, 'ฝ่ายทรัพยากรบุคคล', 'file5519cba5c2187.jpg', 'รายละเอียดฝ่ายทรัพยากรบุคคล'),
-(6, 'สำนักงานการพิมพ์', 'file5519cb9c5e995.png', 'รายละเอียดสำนักงานการพิมพ์'),
-(7, 'ฝ่ายวิจัยและพัฒนา', 'file5519cb92b36cd.jpg', 'รายละเอียดฝ่ายวิจัยและพัฒนา'),
-(8, 'ฝ่ายใบยา', 'file5519cb7cd5c9a.png', 'รายละเอียดฝ่ายใบยา'),
-(9, 'โรงงานยาสูบ 3', 'file5519cb73094e0.jpg', 'รายละเอียดโรงงานยาสูบ 3'),
-(10, 'โรงงานยาสูบ 4', 'file5519cb689c21d.png', 'รายละเอียดโรงงานยาสูบ 4'),
-(11, 'โรงงานยาสูบ 5', 'file5519cb5cb4de4.jpg', 'รายละเอียดโรงงานยาสูบ 5'),
-(12, 'โรงงานยาสูบ 6', 'file5519cb4e5ef97.jpg', 'รายละเอียดโรงงานยาสูบ 6'),
-(13, 'สำนักกฎหมาย', 'file5519cb2fe06e9.jpg', 'รายละเอียดสำนักกฎหมาย'),
-(14, 'สำนักเทคโนโลยีสารสนเทศ', 'file5519cb266fc03.jpg', 'รายละเอียดสำนักเทคโนโลยีสารสนเทศ'),
-(15, 'โรงพยาบาลโรงงานยาสูบ', 'file5519c922df344.png', 'รายละเอียดโรงพยาบาลโรงงานยาสูบ');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -529,7 +463,7 @@ CREATE TABLE IF NOT EXISTS `level` (
 INSERT INTO `level` (`level_id`, `level_name`, `created_at`, `updated_at`) VALUES
 (0, 'user', '2015-02-03 17:45:25', '2015-02-03 17:45:25'),
 (1, 'super_admin', '2015-02-03 17:45:25', '2015-02-03 17:45:25'),
-(2, 'cluster_it', '2015-02-03 17:45:25', '2015-02-03 17:45:25'),
+(2, 'admin', '2015-02-03 17:45:25', '2015-02-03 17:45:25'),
 (3, 'cluster', '2015-02-03 17:45:25', '2015-02-03 17:45:25'),
 (4, 'writer', '2015-02-03 17:45:25', '2015-02-03 17:45:25');
 
@@ -545,15 +479,7 @@ CREATE TABLE IF NOT EXISTS `news` (
   `news_description` text NOT NULL,
   `news_image_path` varchar(255) NOT NULL,
   `account_id` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `news`
---
-
-INSERT INTO `news` (`news_id`, `news_name`, `news_description`, `news_image_path`, `account_id`) VALUES
-(5, 'ทดสอบ', 'ทดสอบ ทดสอบ ทดสอบ', 'file54eef4812ba2c.jpg', 1),
-(6, 'Test', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry''s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.', 'file54f3ddc8e95d2.jpg', 1);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Indexes for dumped tables
@@ -672,22 +598,22 @@ MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=121;
 -- AUTO_INCREMENT for table `content`
 --
 ALTER TABLE `content`
-MODIFY `content_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=40;
+MODIFY `content_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `content_attach_file`
 --
 ALTER TABLE `content_attach_file`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `content_video`
 --
 ALTER TABLE `content_video`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=42;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `faq`
 --
 ALTER TABLE `faq`
-MODIFY `faq_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+MODIFY `faq_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `guru`
 --
@@ -702,12 +628,12 @@ MODIFY `guru_cat_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=15;
 -- AUTO_INCREMENT for table `kmcenter`
 --
 ALTER TABLE `kmcenter`
-MODIFY `kmcenter_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=16;
+MODIFY `kmcenter_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `news`
 --
 ALTER TABLE `news`
-MODIFY `news_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
+MODIFY `news_id` int(11) NOT NULL AUTO_INCREMENT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

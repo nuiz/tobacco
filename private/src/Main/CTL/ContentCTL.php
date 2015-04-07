@@ -65,8 +65,11 @@ class ContentCTL extends BaseCTL {
 
         $insert["account_id"] = $user["account_id"];
 
+//        $insert["created_at"] = date('Y-m-d H:i:s');
+//        $insert["updated_at"] = $insert["created_at"];
+
         $insert["created_at"] = time();
-        $insert["updated_at"] = time();
+        $insert["updated_at"] = $insert["created_at"];
 
         $id = $db->insert($this->table, $insert);
 
@@ -225,6 +228,10 @@ class ContentCTL extends BaseCTL {
 //        $old = $this->_get($id);
 
         $update = ArrayHelper::filterKey(["content_name", "category_id", "content_description"], $params);
+        if(count($update) > 0){
+//            $update["updated_at"] = date("Y-m-d H:i:s");
+            $update["updated_at"] = time();
+        }
 
         $db = MedooFactory::getInstance();
 
@@ -241,6 +248,10 @@ class ContentCTL extends BaseCTL {
 //        $old = $this->_get($id);
 
         $update = ArrayHelper::filterKey(["content_name", "category_id", "content_description"], $params);
+        if(count($update) > 0){
+//            $update["updated_at"] = date("Y-m-d H:i:s");
+            $update["updated_at"] = time();
+        }
 
         $db = MedooFactory::getInstance();
         $db->pdo->beginTransaction();
