@@ -33,6 +33,6 @@ class ConfigSystemRepository {
     }
 
     public function getAll(){
-        return $this->db->select($this->table, "*");
+        $item = $this->db->select($this->table, "*");
     }
 }

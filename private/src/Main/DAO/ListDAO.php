@@ -53,7 +53,8 @@ class ListDAO {
     }
 
     private static function _getDefaultOptionList(){
-        return ["limit"=> 100, "page"=> 1, "where"=> [], "field" => "*", "url"=> ""];
+        return ["limit"=> 100, "page"=> 1, "where"=> [], "field" => "*", "url"=>
+            "http://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"];
     }
 
     private static function _buildUrl($url, $attr){
