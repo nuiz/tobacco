@@ -95,21 +95,20 @@ class NewsService extends BaseService {
         $updateParams['updated_at'] = time();
 
         $masterDB = MedooFactory::getInstance();
-        $result = $masterDB->update($this->table, $updateParams, ['id'=> $id]);
+        $result = $masterDB->update($this->table, $updateParams, ['news_id'=> $id]);
 
         return $this->get($id, $context);
     }
 
     public function get($id, Context $context){
         $masterDB = MedooFactory::getInstance();
-        $result = $masterDB->select($this->table, '*', ['id'=> $id, 'LIMIT'=> 1]);
-        return @$result[0]? $result[0]: null;
+        return $masterDB->get($this->table, '*', ['news_id'=> $id]);
     }
 
     public function delete($id, Context $context){
         $masterDB = MedooFactory::getInstance();
 
-        $result = $masterDB->delete($this->table, ['id'=> $id]);
+        $result = $masterDB->delete($this->table, ['news_id'=> $id]);
 
         return (bool)$result;
     }

@@ -34,6 +34,7 @@ class NewsCTL extends BaseCTL {
         AccountPermission::requirePermission($user, [AccountPermission::ID_CLUSTER_IT, AccountPermission::ID_SUPER_ADMIN, AccountPermission::ID_WRITER]);
 
         $insert["account_id"] = $user["account_id"];
+        $insert["created_at"] = date("Y-m-d H:i:s");
 
         $img = FileUpload::load($this->reqInfo->file("news_image"));
         $name = $img->generateName(true);
@@ -69,6 +70,7 @@ class NewsCTL extends BaseCTL {
     public function get(){
         try {
             $item = NewsService::getInstance()->get($this->reqInfo->urlParam('id'), $this->getCtx());
+            if($item) $this->_build($item);
             $v = new JsonView($item);
             return $v;
         }
@@ -84,8 +86,14 @@ class NewsCTL extends BaseCTL {
         $params = $this->reqInfo->params();
         $params["url"] = URL::absolute("/news");
         $params["where"] = [
-            "ORDER"=> "news_id DESC"
+            "ORDER"=> "created_at DESC"
         ];
+
+        $date = $this->reqInfo->param("date");
+        if(!empty($date)){
+            $ts = strtotime($date);
+            $params["where"]["created_at[<>]"] = [date("Y-m-01", $ts), date("Y-m-t", $ts)];
+        }
 
         $listResponse = ListDAO::gets($this->table, $params);
         $this->_builds($listResponse["data"]);
