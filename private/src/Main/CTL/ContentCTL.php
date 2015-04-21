@@ -50,6 +50,60 @@ class ContentCTL extends BaseCTL {
     }
 
     /**
+     * @GET
+     * @uri /by_category
+     */
+    public function getsByCategory(){
+        $params = $this->reqInfo->params();
+        $params["url"] = URL::absolute("/content/by_category");
+        $params["join"] = $this->join;
+        $params["where"] = [
+            "ORDER"=> "content.content_id DESC"
+        ];
+        $params["field"]= ["*", "content.content_id"];
+
+        if(isset($params["category_id"]) && !empty($params["category_id"])){
+            $catId = $params["category_id"];
+            $db = MedooFactory::getInstance();
+
+            $cat = $db->get("category", "*", ["category_id"=> $catId]);
+            if(!$cat){
+                return false;
+            }
+
+            if($cat['parent_id']==0){
+                $loop = 2;
+            }
+            else {
+                $loop = 1;
+            }
+
+            $allCatsId = [$catId];
+            $catsId = [$catId];
+            $i = 0;
+            while($i < $loop){
+                $items = $db->select("category", "*", ["parent_id"=> $catsId]);
+
+                $catsId = [];
+                if(count($items)==0){
+                    break;
+                }
+                foreach($items as $value){
+                    $allCatsId[] = $value['category_id'];
+                    $catsId[] = $value['category_id'];
+                }
+                $i++;
+            }
+
+            $params["where"]["content.category_id"] = $allCatsId;
+        }
+
+        $listResponse = ListDAO::gets($this->table, $params);
+        $this->builds($listResponse["data"]);
+        return new JsonView($listResponse);
+    }
+
+    /**
      * @POST
      */
     public function add(){

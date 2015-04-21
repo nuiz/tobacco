@@ -7,6 +7,8 @@ php_value safe_mode off
 #php_flag max_execution_time 300
 #php_flag memory_limit "64M"
 
+Header set Access-Control-Allow-Origin "*"
+
 <Limit GET POST PUT DELETE>
   Allow from all
 </Limit>
