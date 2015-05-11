@@ -7,6 +7,7 @@
  */
 
 namespace Main\CTL;
+use Main\DAO\ListDAO;
 use Main\DB\Medoo\MedooFactory;
 use Main\Helper\ArrayHelper;
 use Main\Repository\GuruRepo;
@@ -28,6 +29,15 @@ class GuruCTL extends BaseCTL {
     public function gets(){
         $params = $this->getReqInfo()->params();
         return new JsonView($this->getRepo()->gets($params));
+    }
+
+    /**
+     * @GET
+     * @uri /category
+     */
+    public function category(){
+        $res = ListDAO::gets("guru_category");
+        return new JsonView($res);
     }
 
     /**

@@ -49,7 +49,7 @@ class AccountCTL extends BaseCTL {
      */
     public function addCluster(){
         $params = $this->reqInfo->params();
-        $params = ArrayHelper::filterKey(["username", "password"], $params);
+        $params = ArrayHelper::filterKey(["username", "password", "firstname"], $params);
         $params["level_id"] = 3;
 
         $user = $this->reqInfo->getAuthAccount();
@@ -65,6 +65,8 @@ class AccountCTL extends BaseCTL {
                 ]
             ];
         }
+
+        $params['created_at'] = date('Y-m-d H:i:s');
 
         $id = $db->insert($this->table, $params);
 
@@ -137,15 +139,15 @@ class AccountCTL extends BaseCTL {
             $params["where"]["AND"]["cluster_id"] = $cluster_id;
         }
         $listResponse = ListDAO::gets($this->table, $params);
-//        foreach($listResponse['data'] as $key=> $value){
-//            $value['cluster'] = $db->get("account", "*", [
-//                "AND"=> [
-//                    "account_id"=> $value["cluster_id"],
-//                    "level_id"=> 3
-//                ]
-//            ]);
-//            //$listResponse['data'][$key] = $value;
-//        }
+        foreach($listResponse['data'] as $key=> $value){
+            $value['cluster'] = $db->get("account", "*", [
+                "AND"=> [
+                    "account_id"=> $value["cluster_id"],
+                    "level_id"=> 3
+                ]
+            ]);
+            $listResponse['data'][$key] = $value;
+        }
         return new JsonView($listResponse);
     }
 
@@ -178,7 +180,7 @@ class AccountCTL extends BaseCTL {
         $user = $this->getReqInfo()->getAuthAccount();
         AccountPermission::requirePermission($user, [AccountPermission::ID_CLUSTER, AccountPermission::ID_CLUSTER_IT, AccountPermission::ID_SUPER_ADMIN]);
 
-        $id = $db->update($this->table, ["level_id"=> 4, "cluster_id"=> $user['account_id']], ["account_id"=> $params["account_id"]]);
+        $id = $db->update($this->table, ["level_id"=> 4, "cluster_id"=> $user['account_id'], "upgrade_level_at"=> date("Y-m-d H:i:s")], ["account_id"=> $params["account_id"]]);
 
         $item = $this->_get($params["account_id"]);
         return new JsonView($item);
