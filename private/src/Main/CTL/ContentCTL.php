@@ -41,7 +41,23 @@ class ContentCTL extends BaseCTL {
         $params["field"]= ["*", "content.content_id"];
 
         if(isset($params["category_id"]) && !empty($params["category_id"])){
-            $params["where"]["content.category_id"] = $params["category_id"];
+            $params["where"]["AND"]["content.category_id"] = $params["category_id"];
+        }
+
+        if(isset($params["date_start"]) && !empty($params["date_start"])){
+            $params["where"]["AND"]["created_at[>=]"] = strtotime($params["date_start"]);
+        }
+        
+        if(isset($params["date_end"]) && !empty($params["date_end"])){
+            $params["where"]["AND"]["created_at[<]"] = strtotime($params["date_end"]) + (24*60*60);
+        }
+
+        if(isset($params["content_type"]) && !empty($params["content_type"])){
+            $params["where"]["AND"]["content.content_type"] = $params["content_type"];
+        }
+
+        if(isset($params["keyword"]) && !empty($params["keyword"])){
+            $params["where"]["AND"]["content.content_name[~]"] = $params["keyword"];
         }
 
         $listResponse = ListDAO::gets($this->table, $params);
