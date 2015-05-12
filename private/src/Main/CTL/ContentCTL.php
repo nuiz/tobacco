@@ -57,7 +57,7 @@ class ContentCTL extends BaseCTL {
         }
 
         if(isset($params["keyword"]) && !empty($params["keyword"])){
-            $params["where"]["AND"]["content.content_name[~]"] = $params["keyword"];
+            $params["where"]["AND"]["content.content_name[~]"] = '%'.$params["keyword"].'%';
         }
 
         $listResponse = ListDAO::gets($this->table, $params);

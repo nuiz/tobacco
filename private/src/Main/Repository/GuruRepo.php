@@ -73,7 +73,15 @@ class GuruRepo {
         ];
 
         if(isset($params["guru_cat_id"]) && !empty($params['guru_cat_id'])){
-            $params["where"]['guru.guru_cat_id'] = $params["guru_cat_id"];
+            $params["where"]["AND"]['guru.guru_cat_id'] = $params["guru_cat_id"];
+        }
+
+        if(isset($params["firstname"]) && !empty($params['firstname'])){
+            $params["where"]["AND"]['account.firstname[~]'] = '%'.$params["firstname"].'%';
+        }
+
+        if(isset($params["lastname"]) && !empty($params['lastname'])){
+            $params["where"]["AND"]['account.lastname[~]'] = '%'.$params["lastname"].'%';
         }
 
         $listResponse = ListDAO::gets(self::TABLE_GURU, $params);
