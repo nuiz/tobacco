@@ -49,8 +49,14 @@ class AccountCTL extends BaseCTL {
      */
     public function addCluster(){
         $params = $this->reqInfo->params();
-        $params = ArrayHelper::filterKey(["username", "password", "firstname"], $params);
+        $params = ArrayHelper::filterKey(["username", "password", "firstname", "cluster_id"], $params);
         $params["level_id"] = 3;
+
+
+
+        if($params["cluster_id"]){
+
+        }
 
         $user = $this->reqInfo->getAuthAccount();
         AccountPermission::requirePermission($user, [AccountPermission::ID_CLUSTER_IT, AccountPermission::ID_SUPER_ADMIN]);

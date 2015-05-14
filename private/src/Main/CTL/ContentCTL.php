@@ -118,6 +118,7 @@ class ContentCTL extends BaseCTL {
         $db->pdo->beginTransaction();
 
         $insert["account_id"] = $user["account_id"];
+        $insert["cluster_id"] = is_null($user["cluster_id"])? 0: $user["cluster_id"];
 
 //        $insert["created_at"] = date('Y-m-d H:i:s');
 //        $insert["updated_at"] = $insert["created_at"];
