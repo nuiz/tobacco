@@ -443,6 +443,21 @@ class ContentCTL extends BaseCTL {
         return ["success"=> true];
     }
 
+    /**
+     * @POST
+     * @uri /video/applyname
+     */
+    public function applyname(){
+        $videos = $this->getReqInfo()->input("videos");
+        $db = MedooFactory::getInstance();
+        foreach($videos as $key=> $video){
+            $condition = ["id"=> $video["id"]];
+            $db->update($this->table_video, ["video_name"=> $video["name"]], $condition);
+        }
+
+        return ["success"=> true];
+    }
+
     public function uploadAttachFile(){
 
     }

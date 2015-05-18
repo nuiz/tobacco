@@ -179,6 +179,19 @@ class NewsCTL extends BaseCTL {
         return $this->_get($id);
     }
 
+    /**
+     * @DELETE
+     * @uri /[i:id]/images
+     */
+    public function imagesDelete(){
+        $news_id = $this->reqInfo->urlParam("id");
+        $params = $this->reqInfo->inputs();
+        $db = MedooFactory::getInstance();
+        $db->delete($this->table_images, ["id"=> $params["id"]]);
+
+        return ['success'=> true];
+    }
+
     // internal function
     public function _get($id){
         $db = MedooFactory::getInstance();
