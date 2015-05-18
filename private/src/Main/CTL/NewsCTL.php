@@ -155,6 +155,30 @@ class NewsCTL extends BaseCTL {
         return ["success"=> true];
     }
 
+    /**
+     * @POST
+     * @uri /[i:id]/images
+     */
+    public function imagesUpload(){
+        $id = $this->reqInfo->urlParam("id");
+        $db = MedooFactory::getInstance();
+        $db->pdo->beginTransaction();
+        $images = @$_FILES["news_images"]? $_FILES["news_images"]: [];
+        foreach($images["name"] as $key=> $value){
+            $name = $images["name"][$key];
+            $ext = explode(".", $name);
+            $ext = array_pop($ext);
+            if(!in_array($ext, ['jpg', 'jpeg', 'png'])){
+                $db->pdo->rollBack();
+                return ResponseHelper::error("news_image extension not allowed");
+            }
+            $this->insertImage($images["tmp_name"][$key], $name, $id);
+        }
+
+        $db->pdo->commit();
+        return $this->_get($id);
+    }
+
     // internal function
     public function _get($id){
         $db = MedooFactory::getInstance();
