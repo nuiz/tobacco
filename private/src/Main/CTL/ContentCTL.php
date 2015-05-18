@@ -60,6 +60,13 @@ class ContentCTL extends BaseCTL {
             $params["where"]["AND"]["content.content_name[~]"] = '%'.$params["keyword"].'%';
         }
 
+        if(isset($params["auth_token"]) && !empty($params["auth_token"]) && isset($params["req_from_management"])){
+            $user = $this->reqInfo->getAuthAccount();
+            if($user["cluster_id"] != 0){
+                $params["where"]["AND"]["content.cluster_id"] = $user["cluster_id"];
+            }
+        }
+
         $listResponse = ListDAO::gets($this->table, $params);
         $this->builds($listResponse["data"]);
         return new JsonView($listResponse);
