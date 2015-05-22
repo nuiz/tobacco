@@ -17,10 +17,6 @@ abstract class BaseService {
      */
     protected $ctx;
 
-    protected function __construct()
-    {
-    }
-
     final private function __clone()
     {
     }

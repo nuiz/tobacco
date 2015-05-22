@@ -67,8 +67,8 @@ class ListDAO {
 
         $query = array_merge($oldQuery, $attr);
         $newUrl = "";
-        if(isset($old["schema"])){
-            $newUrl .= $old["schema"]."://";
+        if(isset($old["scheme"])){
+            $newUrl .= $old["scheme"]."://";
         }
         $newUrl .= $old["host"].$old["path"];
         return $newUrl."?".http_build_query($query);

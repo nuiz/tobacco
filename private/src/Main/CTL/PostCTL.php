@@ -11,40 +11,64 @@ namespace Main\CTL;
 
 use Main\DB\Medoo\Medoo;
 use Main\DB\Medoo\MedooFactory;
+use Main\Helper\ArrayHelper;
+use Main\Helper\ResponseHelper;
+use Main\Http\FileUpload;
+use Main\Service\BlogService;
 
+/**
+ * @Restful
+ * @uri /blog
+ */
 class PostCTL extends BaseCTL {
+    private $blogService = null;
     /**
-     * @var Medoo $db;
+     * @GET
+     * @uri /feed
      */
-    private $db;
-
-    public function _build(&$item){
-        $uid = $this->getUid();
-        if(!$uid)
-            $item['liked'] = false;
-        $item['liked'] = (bool)$this->getLike($item['post_id'], $uid);
+    public function gets(){
+        return $this->getService()->gets();
     }
 
-    public function getLike($post_id, $uid){
-        $db = $this->db;
-        return $db->get("post_like", "*", ["post_id"=> $post_id, "account_id"=> $uid]);
-    }
-
-    public function getDB(){
-        if(is_null($this->db)){
-            $this->db = MedooFactory::getInstance();
+    /**
+     * @POST
+     * @uri /post
+     */
+    public function add(){
+        $params = $this->getReqInfo()->params();
+        if($params["post_type"]=="video"){
+            $params["post_video"] = FileUpload::load($this->getReqInfo()->file("video"));
+            $params["post_video_thumb"] = FileUpload::load($this->getReqInfo()->file("video_thumb"));
         }
-        return $this->db;
+        return $this->getService()->add($params, $this->getReqInfo()->getAuthAccount());
     }
 
-    public function setDB($db){
-        $this->db = $db;
+    /**
+     * @POST
+     * @uri /post/like/[i:id]
+     */
+    public function like(){
+        $this->getService()->like($this->getReqInfo()->urlParam("id"), $this->getReqInfo()->getAuthAccount());
+
+        return ['success'=> true];
     }
 
-    public function getUid(){
-        $u = $this->getReqInfo()->getAuthAccount();
-        if(!is_null($u) && isset($u->account_id))
-            return $u->account_id;
-        return false;
+    /**
+     * @POST
+     * @uri /post/unlike/[i:id]
+     */
+    public function unlike(){
+        $this->getService()->unlike($this->getReqInfo()->urlParam("id"), $this->getReqInfo()->getAuthAccount());
+
+        return ['success'=> true];
+    }
+
+    public function getService(){
+        if(is_null($this->blogService)){
+            $this->blogService = new BlogService();
+            $this->blogService->setDb(MedooFactory::getInstance());
+        }
+
+        return $this->blogService;
     }
 }
