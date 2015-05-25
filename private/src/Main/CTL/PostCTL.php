@@ -37,8 +37,7 @@ class PostCTL extends BaseCTL {
     public function add(){
         $params = $this->getReqInfo()->params();
         if($params["post_type"]=="video"){
-            $params["post_video"] = FileUpload::load($this->getReqInfo()->file("video"));
-            $params["post_video_thumb"] = FileUpload::load($this->getReqInfo()->file("video_thumb"));
+            $params["post_video"] = FileUpload::load($this->getReqInfo()->file("post_video"));
         }
         return $this->getService()->add($params, $this->getReqInfo()->getAuthAccount());
     }

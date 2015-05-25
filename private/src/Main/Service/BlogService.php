@@ -13,6 +13,8 @@ use Main\DAO\ListDAO;
 use Main\DB\Medoo\Medoo;
 use Main\DB\Medoo\MedooFactory;
 use Main\Helper\ArrayHelper;
+use Main\Helper\ResponseHelper;
+use Main\Helper\URL;
 use Main\Http\FileUpload;
 
 class BlogService extends BaseService {
@@ -20,7 +22,7 @@ class BlogService extends BaseService {
      * @var Medoo $db;
      */
     private $db, $authUser;
-    private $table = "blog_post", $table_like = "post_like";
+    private $table = "blog_post", $table_like = "post_like", $table_video = "post_video";
     private $pathVideo = "public/post_video/", $pathThumb = "/public/post_video_thumb/";
     public function setDb($db){
         $this->db = $db;
@@ -37,6 +39,7 @@ class BlogService extends BaseService {
         }
 
         $list = ListDAO::gets($this->table, $options);
+        $this->_builds($list["data"]);
 
         return $list;
     }
@@ -50,8 +53,13 @@ class BlogService extends BaseService {
         $id = $this->db->insert($this->table, $insert);
 
         if($insert['post_type']){
-            $video = FileUpload::load($params["post_video"]["video"]);
-            $this->_addVideo($params, $video);
+//            $video = FileUpload::load($params["post_video"]["video"]);
+            $video = $params["post_video"];
+            if($video->getExt()!="mp4"){
+                $this->db->pdo->rollBack();
+                return ResponseHelper::error("Video upload not mp4");
+            }
+            $this->_addVideo($id, $video);
         }
 
         $this->db->pdo->commit();
@@ -83,6 +91,17 @@ class BlogService extends BaseService {
         if(!$aid)
             $item['liked'] = false;
         $item['liked'] = (bool)$this->getLike($item['post_id'], $aid );
+
+        if($item["post_type"]=="video"){
+            $itemVideo = $this->db->get($this->table_video, "*", ["post_id"=> $item["post_id"]]);
+            $item["video_url"] = URL::absolute("/")."/public/post_video/".$itemVideo["video_path"];
+        }
+    }
+
+    public function _builds(&$items){
+        foreach($items as $key => $item){
+            $this->_build($items[$key]);
+        }
     }
 
     public function getLike($post_id, $uid){
@@ -95,7 +114,12 @@ class BlogService extends BaseService {
         return $item;
     }
 
-    public function _addVideo($params){
+    public function _addVideo($id, FileUpload $video){
+        $des = "public/post_video/";
+        $videoName = $video->generateName(true);
+        $des .= $videoName;
+        $video->move($des);
 
+        $this->db->insert($this->table_video, ["id"=> $id, "video_path"=> $videoName]);
     }
 }
