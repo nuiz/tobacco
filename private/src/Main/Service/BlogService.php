@@ -22,7 +22,7 @@ class BlogService extends BaseService {
      * @var Medoo $db;
      */
     private $db, $authUser;
-    private $table = "blog_post", $table_like = "post_like", $table_video = "post_video";
+    private $table = "blog_post", $table_like = "post_like", $table_video = "post_video", $table_image = "post_image";
     private $pathVideo = "public/post_video/", $pathThumb = "/public/post_video_thumb/";
     public function setDb($db){
         $this->db = $db;
@@ -52,7 +52,7 @@ class BlogService extends BaseService {
         $this->db->pdo->beginTransaction();
         $id = $this->db->insert($this->table, $insert);
 
-        if($insert['post_type']){
+        if($insert['post_type']=="video"){
 //            $video = FileUpload::load($params["post_video"]["video"]);
             $video = $params["post_video"];
             if($video->getExt()!="mp4"){
@@ -60,6 +60,16 @@ class BlogService extends BaseService {
                 return ResponseHelper::error("Video upload not mp4");
             }
             $this->_addVideo($id, $video);
+        }
+        else if($insert['post_type']=="image"){
+            $images = $params["post_image"];
+            foreach($images as $img){
+                if(!in_array($img->getExt(), ["jpeg", "jpg", "png"])){
+                    $this->db->pdo->rollBack();
+                    return ResponseHelper::error("Image upload not jpeg,jpg,png");
+                }
+            }
+            $this->_addImage($id, $images);
         }
 
         $this->db->pdo->commit();
@@ -96,6 +106,15 @@ class BlogService extends BaseService {
             $itemVideo = $this->db->get($this->table_video, "*", ["post_id"=> $item["post_id"]]);
             $item["video_url"] = URL::absolute("/")."/public/post_video/".$itemVideo["video_path"];
         }
+
+        if($item["post_type"]=="image"){
+            $item["images"] = [];
+            $itemImages = $this->db->select($this->table_image, "*", ["post_id"=> $item["post_id"]]);
+            foreach($itemImages as $img){
+                $img["image_url"] = URL::absolute("/")."/public/post_image/".$img["image_path"];
+                $item["images"][] = $img;
+            }
+        }
     }
 
     public function _builds(&$items){
@@ -121,5 +140,20 @@ class BlogService extends BaseService {
         $video->move($des);
 
         $this->db->insert($this->table_video, ["id"=> $id, "video_path"=> $videoName]);
+    }
+
+    /**
+     * @param $id
+     * @param FileUpload[] $images
+     */
+    public function _addImage($id, $images){
+        foreach($images as $img){
+            $des = "public/post_image/";
+            $imageName = $img->generateName(true);
+            $des .= $imageName;
+            $img->move($des);
+
+            $this->db->insert($this->table_image, ["post_id"=> $id, "image_path"=> $imageName]);
+        }
     }
 }

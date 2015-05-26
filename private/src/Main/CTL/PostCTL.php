@@ -38,6 +38,23 @@ class PostCTL extends BaseCTL {
         $params = $this->getReqInfo()->params();
         if($params["post_type"]=="video"){
             $params["post_video"] = FileUpload::load($this->getReqInfo()->file("post_video"));
+            if(is_null($params["post_video"])){
+                return ResponseHelper::validateError(["post_video"=> "require upload video"]);
+            }
+        }
+        if($params["post_type"]=="image"){
+            $params["post_image"] = [];
+            $images = $this->getReqInfo()->file("post_image");
+            if(is_null($images) && count($images["name"]) == 0){
+                return ResponseHelper::validateError(["post_image"=> "require upload image"]);
+            }
+
+            foreach($images["name"] as $key=> $name){
+                $params["post_image"][] = FileUpload::load([
+                    "tmp_name"=> $images["tmp_name"][$key],
+                    "name"=> $name
+                ]);
+            }
         }
         return $this->getService()->add($params, $this->getReqInfo()->getAuthAccount());
     }
