@@ -8,18 +8,21 @@
 
 $tns = "
 (DESCRIPTION =
-    (ADDRESS_LIST =
-      (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.0.24)(PORT = 1521))
+    (ADDRESS =
+      (PROTOCOL=TCP)
+      (HOST=192.168.0.24)
+      (POST=1521)
     )
     (CONNECT_DATA =
-      (SERVICE_NAME = orcl)
+      (SERVICE_NAME = TTM)
     )
   )
        ";
 $db_username = "MISUSER";
 $db_password = "misuser";
 try{
-    $conn = new PDO("oci:dbname=".$tns,$db_username,$db_password);
+//    $conn = new PDO("oci:dbname=".$tns,$db_username,$db_password);
+    $conn = oci_connect($db_username, $db_password, $tns);
     var_dump($conn);
 }catch(PDOException $e){
     echo ($e->getMessage());

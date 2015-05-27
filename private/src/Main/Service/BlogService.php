@@ -115,6 +115,8 @@ class BlogService extends BaseService {
                 $item["images"][] = $img;
             }
         }
+
+        $item["user"] = $this->db->get("account", ["account_id", "firstname", "lastname", "username"], ["account_id"=> $item["account_id"]]);
     }
 
     public function _builds(&$items){
@@ -139,7 +141,7 @@ class BlogService extends BaseService {
         $des .= $videoName;
         $video->move($des);
 
-        $this->db->insert($this->table_video, ["id"=> $id, "video_path"=> $videoName]);
+        $this->db->insert($this->table_video, ["post_id"=> $id, "video_path"=> $videoName]);
     }
 
     /**
