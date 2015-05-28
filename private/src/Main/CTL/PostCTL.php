@@ -40,6 +40,15 @@ class PostCTL extends BaseCTL {
     }
 
     /**
+     * @GET
+     * @uri /[i:id]
+     */
+    public function get(){
+        $uid = $this->getReqInfo()->urlParam("id");
+        return $this->getService()->get($uid);
+    }
+
+    /**
      * @POST
      * @uri /post
      */
@@ -73,9 +82,10 @@ class PostCTL extends BaseCTL {
      * @uri /post/like/[i:id]
      */
     public function like(){
-        $this->getService()->like($this->getReqInfo()->urlParam("id"), $this->getReqInfo()->getAuthAccount());
+        $id = $this->getReqInfo()->urlParam("id");
+        $this->getService()->like($id, $this->getReqInfo()->getAuthAccount());
 
-        return ['success'=> true];
+        return $this->getService()->get($id);
     }
 
     /**
@@ -83,15 +93,33 @@ class PostCTL extends BaseCTL {
      * @uri /post/unlike/[i:id]
      */
     public function unlike(){
-        $this->getService()->unlike($this->getReqInfo()->urlParam("id"), $this->getReqInfo()->getAuthAccount());
+        $id = $this->getReqInfo()->urlParam("id");
+        $this->getService()->unlike($id, $this->getReqInfo()->getAuthAccount());
 
-        return ['success'=> true];
+        return $this->getService()->get($id);
+    }
+
+    /**
+     * @POST
+     * @uri /post/comment/[i:id]
+     */
+    public function addComment(){
+        return $this->getService()->addComment($this->getReqInfo()->urlParam("id"), $this->getReqInfo()->params(), $this->getReqInfo()->getAuthAccount());
+    }
+
+    /**
+     * @GET
+     * @uri /post/comment/[i:id]
+     */
+    public function getComments(){
+        return $this->getService()->getComments($this->getReqInfo()->urlParam("id"));
     }
 
     public function getService(){
         if(is_null($this->blogService)){
             $this->blogService = new BlogService();
             $this->blogService->setDb(MedooFactory::getInstance());
+            $this->blogService->setAuthUser($this->getReqInfo()->getAuthAccount());
         }
 
         return $this->blogService;

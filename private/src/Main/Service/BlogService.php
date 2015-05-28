@@ -22,7 +22,7 @@ class BlogService extends BaseService {
      * @var Medoo $db;
      */
     private $db, $authUser;
-    private $table = "blog_post", $table_like = "post_like", $table_video = "post_video", $table_image = "post_image";
+    private $table = "blog_post", $table_like = "post_like", $table_video = "post_video", $table_image = "post_image", $table_comment = "post_comment";
     private $pathVideo = "public/post_video/", $pathThumb = "/public/post_video_thumb/";
     public function setDb($db){
         $this->db = $db;
@@ -30,6 +30,13 @@ class BlogService extends BaseService {
 
     public function setAuthUser($authUser){
         $this->authUser = $authUser;
+    }
+
+    public function get($id){
+        $item = MedooFactory::getInstance()->get($this->table, "*", ["post_id"=> $id]);
+        $this->_build($item);
+
+        return $item;
     }
 
     public function gets(){
@@ -171,6 +178,50 @@ class BlogService extends BaseService {
             $img->move($des);
 
             $this->db->insert($this->table_image, ["post_id"=> $id, "image_path"=> $imageName]);
+        }
+    }
+
+    public function addComment($post_id, $params, $authUser){
+        $id = $this->db->insert($this->table_comment, [
+            "post_id"=> $post_id,
+            "comment_text"=> $params["comment_text"],
+            "account_id"=> $authUser["account_id"],
+            "created_at"=> date("Y-m-d H:i:s")
+        ]);
+
+        $this->db->update($this->table, ['comment_count[+]'=> 1], ["post_id"=> $post_id]);
+
+        return $this->getComment($id);
+    }
+
+    public function getComment($id){
+        $item = $this->db->get($this->table_comment, "*", ["comment_id"=> $id]);
+        $this->_buildComment($item);
+
+        return $item;
+    }
+
+    public function getComments($post_id){
+        $options = $_GET;
+        if(!isset($options["limit"])){
+            $options["limit"] = 100;
+        }
+
+        $options["where"]["ORDER"] = "created_at ASC";
+        $options["where"]["post_id"] = $post_id;
+        $list = ListDAO::gets($this->table_comment, $options);
+        $this->_buildComments($list["data"]);
+
+        return $list;
+    }
+
+    public function _buildComment(&$item){
+        $item["user"] = $this->db->get("account", ["account_id", "firstname", "lastname", "username"], ["account_id"=> $item["account_id"]]);
+    }
+
+    public function _buildComments(&$items){
+        foreach($items as $key => $item){
+            $this->_buildComment($items[$key]);
         }
     }
 }
