@@ -502,6 +502,8 @@ class ContentCTL extends BaseCTL {
         foreach($item["attach_files"] as $key=> $value){
             $item["attach_files"][$key]["file_url"] = URL::absolute("/public/video/".$item["videos"][$key]["video_path"]);
         }
+
+        $item["question_count"] = $db->count("content_exam_question", "*", ["content_id"=> $item["content_id"]]);
     }
 
     public function builds(&$items){

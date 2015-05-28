@@ -38,6 +38,21 @@ class BlogService extends BaseService {
             $options["limit"] = 15;
         }
 
+        $options["where"]["ORDER"] = "created_at DESC";
+        $list = ListDAO::gets($this->table, $options);
+        $this->_builds($list["data"]);
+
+        return $list;
+    }
+
+    public function gets2($uid){
+        $options = $_GET;
+        if(!isset($options["limit"])){
+            $options["limit"] = 15;
+        }
+
+        $options["where"] = ["account_id"=> $uid];
+
         $list = ListDAO::gets($this->table, $options);
         $this->_builds($list["data"]);
 

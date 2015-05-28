@@ -31,6 +31,15 @@ class PostCTL extends BaseCTL {
     }
 
     /**
+     * @GET
+     * @uri /user/[i:id]
+     */
+    public function gets2(){
+        $uid = $this->getReqInfo()->urlParam("id");
+        return $this->getService()->gets2($uid);
+    }
+
+    /**
      * @POST
      * @uri /post
      */

@@ -37,7 +37,7 @@ class RequestInfo {
         $method = isset($_SERVER['REQUEST_METHOD'])? $_SERVER['REQUEST_METHOD']: 'GET';
 
         $files = array();
-        if($ctType=='application/json'){
+        if(preg_match('/^(application\/json)/', $ctType) != 0){ // or $ctType=='application/json'
             $jsonText = file_get_contents('php://input');
             $params = json_decode($jsonText, true);
             $params = array_merge($_GET, $params);
