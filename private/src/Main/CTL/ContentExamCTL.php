@@ -96,6 +96,8 @@ class ContentExamCTL extends BaseCTL {
         }
 
         $db->pdo->commit();
+
+        return ["success"=> true];
     }
 
     /**
@@ -110,5 +112,18 @@ class ContentExamCTL extends BaseCTL {
         }
 
         return $questions;
+    }
+
+    /**
+     * @DELETE
+     * @uri /question/[i:question_id]
+     */
+    public function delete(){
+        $q_id = $this->getReqInfo()->urlParam("question_id");
+        $db = MedooFactory::getInstance();
+        $db->delete("content_exam_question", ["question_id"=> $q_id]);
+        $db->delete("content_exam_choice", ["question_id"=> $q_id]);
+
+        return ['success'=> true];
     }
 }
