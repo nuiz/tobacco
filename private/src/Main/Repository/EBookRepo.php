@@ -39,6 +39,19 @@ class EBookRepo {
         return $listResponse;
     }
 
+    public function getsRandom($params){
+        $params["url"] = URL::absolute("/ebook");
+        $params["field"] = "*";
+        $params["join"] = $this->join;
+        $params["where"] = [
+            "content_type"=> "book",
+            "ORDER"=> "RAND()",
+            "LIMIT"=> 1000
+        ];
+        $listResponse = ListDAO::gets($this->table, $params);
+        return $listResponse;
+    }
+
     public function getByTypeId($typeId){
         $params["url"] = URL::absolute("/ebook?book_type_id=".$typeId);
         $params["field"] = "*";

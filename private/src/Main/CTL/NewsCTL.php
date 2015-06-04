@@ -108,7 +108,7 @@ class NewsCTL extends BaseCTL {
 
     /**
      * @GET
-     * @uri /[:id]
+     * @uri /[i:id]
      */
     public function get(){
         try {
@@ -141,6 +141,51 @@ class NewsCTL extends BaseCTL {
         $listResponse = ListDAO::gets($this->table, $params);
         $this->_builds($listResponse["data"]);
         return new JsonView($listResponse);
+    }
+
+    /**
+     * @GET
+     * @uri /by_year
+     */
+    public function gets_by_year(){
+        $params = $this->reqInfo->params();
+        $params["url"] = URL::absolute("/news");
+        $params["where"] = [
+            "ORDER"=> "created_at DESC"
+        ];
+
+        $date = $params["year"];
+        $ts = strtotime($date);
+
+        $db = MedooFactory::getInstance();
+        $items = $db->select("news", "*", ["AND"=> [
+            "created_at[>]"=> date("Y-01-01 00:00:00", $ts),
+            "created_at[<]"=> date("Y-12-t 23:59:59", strtotime(date("Y-12-01", $ts)))
+        ]]);
+
+        $res = [];
+        for($i=0; $i<12; $i++){
+            $res[$i] = [
+                "length"=> 0,
+                "data"=> []
+            ];
+            foreach($items as $item){
+                $m = $i+1;
+                $itemTs = strtotime($item["created_at"]);
+                $startMothTs = strtotime(date("Y-{$m}-01 00:00:00", $ts));
+                $endMothTs = strtotime(date("Y-{$m}-t 23:59:59", strtotime(date("Y-{$m}-01", $ts))));
+                if($itemTs >= $startMothTs && $itemTs <= $endMothTs){
+                    $this->_build($item, false);
+                    $res[$i]["data"][] = $item;
+                }
+            }
+            $res[$i]["length"] = count($res[$i]["data"]);
+        }
+
+        return new JsonView([
+            "length"=> count($items),
+            "data"=> $res
+        ]);
     }
 
     /**
@@ -211,12 +256,14 @@ class NewsCTL extends BaseCTL {
         }
     }
 
-    public function _build(&$item){
+    public function _build(&$item, $with_images = true){
         $item["news_cover_url"] = URL::absolute("/public/news_image/".$item["news_cover_path"]);
-        $db = MedooFactory::getInstance();
-        $item["news_images"] = $db->select($this->table_images, "*", ["news_id"=> $item["news_id"]]);
-        foreach($item["news_images"] as $key=> $value){
-            $item["news_images"][$key]["image_url"] = URL::absolute("/public/news_image/".$value["image_path"]);
+        if($with_images){
+            $db = MedooFactory::getInstance();
+            $item["news_images"] = $db->select($this->table_images, "*", ["news_id"=> $item["news_id"]]);
+            foreach($item["news_images"] as $key=> $value){
+                $item["news_images"][$key]["image_url"] = URL::absolute("/public/news_image/".$value["image_path"]);
+            }
         }
     }
 }

@@ -487,7 +487,8 @@ class medoo
 
 			if (isset($where['ORDER']))
 			{
-				$rsort = '/(^[a-zA-Z0-9_\-\.]*)(\s*(DESC|ASC))?/';
+                $rsort = '/(^[a-zA-Z0-9_\-\.]*)(\s*(DESC|ASC|RAND\(\)))?/'; // fix rand()
+//                $rsort = '/(^[a-zA-Z0-9_\-\.]*)(\s*(DESC|ASC))?/';
 				$ORDER = $where['ORDER'];
 
 				if (is_array($ORDER))
@@ -517,7 +518,16 @@ class medoo
 				{
 					preg_match($rsort, $ORDER, $order_match);
 
-					$where_clause .= ' ORDER BY "' . str_replace('.', '"."', $order_match[1]) . '"' . (isset($order_match[3]) ? ' ' . $order_match[3] : '');
+                    // fix rand start
+                    if($ORDER == "RAND()") {
+                        $where_clause .= " ORDER BY RAND()";
+                    }
+                    else {
+                        $where_clause .= ' ORDER BY "' . str_replace('.', '"."', $order_match[1]) . '"' . (isset($order_match[3]) ? ' ' . $order_match[3] : '');
+                    }
+                    // fix rand end
+
+                    //$where_clause .= ' ORDER BY "' . str_replace('.', '"."', $order_match[1]) . '"' . (isset($order_match[3]) ? ' ' . $order_match[3] : '');
 				}
 			}
 

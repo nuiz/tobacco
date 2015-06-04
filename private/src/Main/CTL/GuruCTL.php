@@ -35,15 +35,6 @@ class GuruCTL extends BaseCTL {
      * @GET
      * @uri /category
      */
-    public function category(){
-        $res = ListDAO::gets("guru_category");
-        return new JsonView($res);
-    }
-
-    /**
-     * @GET
-     * @uri /category
-     */
     public function getCats(){
         $params = $this->getReqInfo()->params();
         return new JsonView($this->getRepo()->getCats($params));

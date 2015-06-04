@@ -60,6 +60,19 @@ class EBookCTL extends BaseCTL {
         return $items;
     }
 
+    /**
+     * @GET
+     * @uri /random
+     */
+    public function rand(){
+        $params = $this->reqInfo->params();
+        $items = $this->getRepo()->getsRandom($params);
+        foreach($items['data'] as $key=> $item){
+            $this->build($items['data'][$key]);
+        }
+        return $items;
+    }
+
 
     // internal function
 
