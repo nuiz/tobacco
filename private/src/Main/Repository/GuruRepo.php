@@ -86,6 +86,9 @@ class GuruRepo {
 
         $listResponse = ListDAO::gets(self::TABLE_GURU, $params);
         $this->_builds($listResponse['data']);
+        if(isset($params["guru_cat_id"])){
+            $listResponse["guru_cat"] = $this->getDb()->get(self::TABLE_GURU_CAT, "*", ["guru_cat_id"=> $params["guru_cat_id"]]);
+        }
         return $listResponse;
     }
 
