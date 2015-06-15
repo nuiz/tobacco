@@ -139,6 +139,13 @@ class BlogService extends BaseService {
         }
 
         $item["user"] = $this->db->get("account", ["account_id", "firstname", "lastname", "username"], ["account_id"=> $item["account_id"]]);
+        $picPath = "public/image_users/".$item["user"]["username"].".png";
+        if(file_exists($picPath)){
+            $item["user"]["picture"] = URL::absolute("/").$picPath;
+        }
+        else {
+            $item["user"]["picture"] = URL::absolute("/")."public/images/user.jpg";
+        }
     }
 
     public function _builds(&$items){
@@ -217,6 +224,13 @@ class BlogService extends BaseService {
 
     public function _buildComment(&$item){
         $item["user"] = $this->db->get("account", ["account_id", "firstname", "lastname", "username"], ["account_id"=> $item["account_id"]]);
+        $picPath = "public/image_users/".$item["user"]["username"].".png";
+        if(file_exists($picPath)){
+            $item["user"]["picture"] = URL::absolute("/").$picPath;
+        }
+        else {
+            $item["user"]["picture"] = URL::absolute("/")."public/images/user.jpg";
+        }
     }
 
     public function _buildComments(&$items){

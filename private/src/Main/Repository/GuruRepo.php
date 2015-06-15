@@ -117,6 +117,14 @@ class GuruRepo {
     public function _build(&$item){
         unset($item['password']);
         unset($item['auth_token']);
+
+        $picPath = "public/image_users/".$item["username"].".png";
+        if(file_exists($picPath)){
+            $item["picture"] = URL::absolute("/").$picPath;
+        }
+        else {
+            $item["picture"] = URL::absolute("/")."public/images/user.jpg";
+        }
     }
 
     public function _builds(&$items){

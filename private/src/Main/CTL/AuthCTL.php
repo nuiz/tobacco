@@ -24,7 +24,7 @@ class AuthCTL extends BaseCTL {
     public function password(){
         $params = ArrayHelper::filterKey(["username", "password"], $this->reqInfo->params());
         $db = MedooFactory::getInstance();
-        $user = $db->get($this->table, "*", ["username"=> $params]);
+        $user = $db->get($this->table, "*", ["AND"=> ["username"=> $params, "account_status[!]"=> 3]]);
 
         if(!$user){
             return [
@@ -35,7 +35,7 @@ class AuthCTL extends BaseCTL {
             ];
         }
 
-        if($user['password'] != $params['password']){
+        if($user['password'] != $params['password'] && md5($user['password']) != $params["password"]){
             return [
                 "error"=> [
                     "code"=> 2,
