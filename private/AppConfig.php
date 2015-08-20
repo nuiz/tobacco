@@ -45,6 +45,9 @@ $configs = array(
                 "server" => "192.168.0.236",
                 "username" => 'root2',
                 'password' => '111111',
+//                "server" => "192.168.0.236",
+//                "username" => 'root2',
+//                'password' => '111111',
 
                 // optional
                 'port' => 3306,

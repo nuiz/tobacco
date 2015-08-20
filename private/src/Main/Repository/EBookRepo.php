@@ -52,6 +52,7 @@ class EBookRepo {
         return $listResponse;
     }
 
+<<<<<<< HEAD
     public function getsSearch($params){
         $keyword = $params["keyword"];
         $jKeyword = trim(json_encode($keyword), '"');
@@ -86,6 +87,8 @@ class EBookRepo {
         ];
     }
 
+=======
+>>>>>>> origin/master
     public function getByTypeId($typeId){
         $params["url"] = URL::absolute("/ebook?book_type_id=".$typeId);
         $params["field"] = "*";

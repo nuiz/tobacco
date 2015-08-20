@@ -44,11 +44,19 @@ REGEX;
     }
 
     public static function dispatch(){
+<<<<<<< HEAD
        if(!self::filterIp()){
            header("Content-type: application/json");
            echo json_encode(ResponseHelper::error("ip is not allow ", 401));
            exit();
        }
+=======
+//        if(!self::filterIp()){
+//            header("Content-type: application/json");
+//            echo json_encode(ResponseHelper::error("ip is not allow ", 401));
+//            exit();
+//        }
+>>>>>>> origin/master
 
         $route = self::mapAllCTL();
         $match = $route->match();
