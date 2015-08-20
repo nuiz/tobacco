@@ -86,6 +86,9 @@ class GuruRepo {
 
         $listResponse = ListDAO::gets(self::TABLE_GURU, $params);
         $this->_builds($listResponse['data']);
+        if(isset($params["guru_cat_id"])){
+            $listResponse["guru_cat"] = $this->getDb()->get(self::TABLE_GURU_CAT, "*", ["guru_cat_id"=> $params["guru_cat_id"]]);
+        }
         return $listResponse;
     }
 
@@ -97,6 +100,10 @@ class GuruRepo {
             "LIMIT"=> 1000
         ];
         $listResponse = ListDAO::gets(self::TABLE_GURU_CAT, $params);
+        $listResponse["data"] = array_map(function($item){
+            $item["guru_cat_icon_url"] = URL::absolute("/public/guru_icon/".$item["guru_cat_icon"]);
+            return $item;
+        }, $listResponse["data"]);
         return $listResponse;
     }
 
@@ -114,6 +121,14 @@ class GuruRepo {
     public function _build(&$item){
         unset($item['password']);
         unset($item['auth_token']);
+
+        $picPath = "public/image_users/".$item["username"].".png";
+        if(file_exists($picPath)){
+            $item["picture"] = URL::absolute("/").$picPath;
+        }
+        else {
+            $item["picture"] = URL::absolute("/")."public/images/user.jpg";
+        }
     }
 
     public function _builds(&$items){

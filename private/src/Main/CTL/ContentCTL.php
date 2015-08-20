@@ -146,8 +146,8 @@ class ContentCTL extends BaseCTL {
 //        $insert["created_at"] = date('Y-m-d H:i:s');
 //        $insert["updated_at"] = $insert["created_at"];
 
-        $insert["created_at"] = time();
-        $insert["updated_at"] = $insert["created_at"];
+        $insert["created_at"] = strtotime($params['created_at']);
+        $insert["updated_at"] = time();
 
         $id = $db->insert($this->table, $insert);
 
@@ -305,7 +305,7 @@ class ContentCTL extends BaseCTL {
 
 //        $old = $this->_get($id);
 
-        $update = ArrayHelper::filterKey(["content_name", "category_id", "content_description"], $params);
+        $update = ArrayHelper::filterKey(["content_name", "category_id", "content_description", "guru_id"], $params);
         if(count($update) > 0){
 //            $update["updated_at"] = date("Y-m-d H:i:s");
             $update["updated_at"] = time();
@@ -479,6 +479,7 @@ class ContentCTL extends BaseCTL {
         $item = $db->get($this->table, $this->join, ["*", "content.content_id"], ["content.content_id"=> $id]);
         if(!is_null($item)){
             $this->build($item);
+            $db->update($this->table, ["view_count[+]"=> 1], ["content.content_id"=> $id]);
         }
 
         return $item;

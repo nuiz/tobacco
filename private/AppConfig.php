@@ -11,7 +11,7 @@ $configs = array(
         "name" => "",
         "title" => "",
         "version" => "",
-        "base_url" => "http://127.0.0.1/tobacco",
+        "base_url" => "http://{$_SERVER["HTTP_HOST"]}/tobacco",
         "site_url" => "",
         "share_url" => "",
         "directory" => dirname(__FILE__),
@@ -39,8 +39,11 @@ $configs = array(
             "master"=> array(
                 "database_type"=> "mysql",
                 "database_name" => "tobacco2",
-                "server" => "localhost",
-                "username" => 'root',
+                //"server" => "localhost",
+                //"username" => 'root',
+                //'password' => '111111',
+                "server" => "192.168.0.236",
+                "username" => 'root2',
                 'password' => '111111',
 
                 // optional

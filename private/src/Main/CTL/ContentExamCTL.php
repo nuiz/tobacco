@@ -126,4 +126,23 @@ class ContentExamCTL extends BaseCTL {
 
         return ['success'=> true];
     }
+
+    /**
+     * @PUT
+     * @uri /question/[i:question_id]
+     */
+    public function edit(){
+        $q_id = $this->getReqInfo()->urlParam("question_id");
+        $db = MedooFactory::getInstance();
+
+        $params = $this->getReqInfo()->params();
+
+        $db->update("content_exam_question", ArrayHelper::filterKey(["question"], $params), ["question_id"=> $q_id]);
+        if(!empty($params["choices"]) && is_array($params["choices"])){
+            foreach($params["choices"] as $key=> $c){
+                $db->update("content_exam_choice", ArrayHelper::filterKey(["choice", "is_answer"], $c), ["choice_id"=> $c["choice_id"]]);
+            }
+        }
+        return ["success"=> true];
+    }
 }

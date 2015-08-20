@@ -44,7 +44,7 @@ class KmcenterCTL extends BaseCTL {
      */
     public function add(){
         $params = $this->getReqInfo()->params();
-        $insert = ArrayHelper::filterKey(['kmcenter_name', 'kmcenter_description'], $params);
+        $insert = ArrayHelper::filterKey(['kmcenter_name', 'kmcenter_description', 'kmcenter_phone', 'kmcenter_location'], $params);
         $files = $this->getReqInfo()->files();
         return $this->getRepo()->add($insert, $files);
     }
@@ -55,7 +55,7 @@ class KmcenterCTL extends BaseCTL {
      */
     public function edit(){
         $params = $this->getReqInfo()->params();
-        $insert = ArrayHelper::filterKey(['kmcenter_name', 'kmcenter_description'], $params);
+        $insert = ArrayHelper::filterKey(['kmcenter_name', 'kmcenter_description', 'kmcenter_phone', 'kmcenter_location'], $params);
         $files = $this->getReqInfo()->files();
 
         $id = $this->getReqInfo()->urlParam("id");

@@ -19,26 +19,36 @@ use Main\View\BaseView;
 
 class AutoRoute {
     public static function filterIp(){
-        $db = MedooFactory::getInstance();
-        $ip_list = $db->select("ip_filter", "*");
-        $ip_list = array_merge($ip_list,[
-            ["ip"=> "localhost"],
-            ["ip"=> "127.0.0.1"],
-            ["ip"=> "::1"]
-        ]);
+        return true;
 
-        foreach($ip_list as $ip){
-            if($_SERVER["REMOTE_ADDR"] == $ip["ip"]) return true;
+        // $db = MedooFactory::getInstance();
+        // $ip_list = $db->select("ip_filter", "*");
+        // $ip_list = array_merge($ip_list,[
+        //     ["ip"=> "localhost"],
+        //     ["ip"=> "127.0.0.1"],
+        //     ["ip"=> "::1"]
+        // ]);
+
+        // foreach($ip_list as $ip){
+        //     if($_SERVER["REMOTE_ADDR"] == $ip["ip"]) return true;
+        // }
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $regex = <<<REGEX
+/^((172)|(192)|(203\.209\.122\.219))/
+REGEX;
+
+        if(preg_match($regex, $ip)){
+            return true;
         }
         return false;
     }
 
     public static function dispatch(){
-        if(!self::filterIp()){
-            header("Content-type: application/json");
-            echo json_encode(ResponseHelper::error("ip is not allow ", 401));
-            exit();
-        }
+       if(!self::filterIp()){
+           header("Content-type: application/json");
+           echo json_encode(ResponseHelper::error("ip is not allow ", 401));
+           exit();
+       }
 
         $route = self::mapAllCTL();
         $match = $route->match();

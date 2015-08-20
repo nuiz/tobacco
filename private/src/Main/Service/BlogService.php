@@ -139,6 +139,13 @@ class BlogService extends BaseService {
         }
 
         $item["user"] = $this->db->get("account", ["account_id", "firstname", "lastname", "username"], ["account_id"=> $item["account_id"]]);
+        $picPath = "public/image_users/".$item["user"]["username"].".png";
+        if(file_exists($picPath)){
+            $item["user"]["picture"] = URL::absolute("/").$picPath;
+        }
+        else {
+            $item["user"]["picture"] = URL::absolute("/")."public/images/user.jpg";
+        }
     }
 
     public function _builds(&$items){
@@ -171,11 +178,13 @@ class BlogService extends BaseService {
      * @param FileUpload[] $images
      */
     public function _addImage($id, $images){
+        $names = [];
         foreach($images as $img){
             $des = "public/post_image/";
             $imageName = $img->generateName(true);
             $des .= $imageName;
             $img->move($des);
+
 
             $this->db->insert($this->table_image, ["post_id"=> $id, "image_path"=> $imageName]);
         }
@@ -217,11 +226,58 @@ class BlogService extends BaseService {
 
     public function _buildComment(&$item){
         $item["user"] = $this->db->get("account", ["account_id", "firstname", "lastname", "username"], ["account_id"=> $item["account_id"]]);
+        $picPath = "public/image_users/".$item["user"]["username"].".png";
+        if(file_exists($picPath)){
+            $item["user"]["picture"] = URL::absolute("/").$picPath;
+        }
+        else {
+            $item["user"]["picture"] = URL::absolute("/")."public/images/user.jpg";
+        }
     }
 
     public function _buildComments(&$items){
         foreach($items as $key => $item){
             $this->_buildComment($items[$key]);
         }
+    }
+
+    public function deletePost($id) {
+        $db = MedooFactory::getInstance();
+        $where = ["post_id"=> $id];
+        $item = $db->get($this->table, "*", $where);
+        if(!$item) {
+            return $id;
+        }
+
+        if($item['post_type'] == "video") {
+            $itemVideo = $db->get("post_video", "*", $where);
+            $db->delete('post_video', $where);
+            unlink('public/post_video/'.$itemVideo['video_path']);
+        }
+        else if($item['post_type'] == "image") {
+            $itemImgs = $db->select("post_image", "*", $where);
+            $imageNames = array_map(function($item){
+                return $item['image_path'];
+            }, $itemImgs);
+            $db->delete('post_image', $where);
+            foreach($imageNames as $value) {
+                unlink('public/post_image/'.$value);
+            }
+        }
+        $db->delete($this->table, $where);
+        $db->delete($this->table_comment, $where);
+
+        return $id;
+    }
+
+    public function deleteComment($id) {
+        $where = [ "comment_id"=> $id ];
+        $comment = $this->db->get($this->table_comment, "*", $where);
+        if(!$comment) return $id;
+
+        $this->db->delete($this->table_comment, $where);
+        $this->db->update($this->table, ['comment_count[-]'=> 1], ["post_id"=> $comment['post_id']]);
+
+        return $id;
     }
 }

@@ -29,13 +29,15 @@ class NewsCTL extends BaseCTL {
      */
     public function add(){
         $params = $this->reqInfo->params();
-        $insert = ArrayHelper::filterKey(["news_name", "news_description"], $params);
+        // $insert = ArrayHelper::filterKey(["news_name", "news_description"], $params);
+        $insert = ArrayHelper::filterKey(["news_name", "news_description", "created_at"], $params);
 
         $user = $this->reqInfo->getAuthAccount();
         AccountPermission::requirePermission($user, [AccountPermission::ID_CLUSTER_IT, AccountPermission::ID_SUPER_ADMIN, AccountPermission::ID_WRITER]);
 
         $insert["account_id"] = $user["account_id"];
-        $insert["created_at"] = date("Y-m-d H:i:s");
+        //$insert["created_at"] = date("Y-m-d H:i:s");
+        $insert["created_at"] = $insert["created_at"].date(" H:i:s");
 
         $img = FileUpload::load($this->reqInfo->file("news_cover"));
         $name = $img->generateName(true);
@@ -83,7 +85,7 @@ class NewsCTL extends BaseCTL {
     public function edit(){
         try {
             $params = $this->reqInfo->params();
-            $update = ArrayHelper::filterKey(["news_name", "news_description"], $params);
+            $update = ArrayHelper::filterKey(["news_name", "news_description", "created_at"], $params);
 
             $file = $this->reqInfo->file("news_cover");
 
@@ -108,12 +110,17 @@ class NewsCTL extends BaseCTL {
 
     /**
      * @GET
-     * @uri /[:id]
+     * @uri /[i:id]
      */
     public function get(){
         try {
-            $item = NewsService::getInstance()->get($this->reqInfo->urlParam('id'), $this->getCtx());
-            if($item) $this->_build($item);
+            $id = $this->reqInfo->urlParam('id');
+            $item = NewsService::getInstance()->get($id, $this->getCtx());
+            $db = MedooFactory::getInstance();
+            if($item){
+                $this->_build($item);
+                $db->update($this->table, ["view_count[+]"=> 1], ["news_id"=> $id]);
+            }
             $v = new JsonView($item);
             return $v;
         }
@@ -135,12 +142,62 @@ class NewsCTL extends BaseCTL {
         $date = $this->reqInfo->param("date");
         if(!empty($date)){
             $ts = strtotime($date);
-            $params["where"]["created_at[<>]"] = [date("Y-m-01", $ts), date("Y-m-t", $ts)];
+            $params["where"]["AND"]["created_at[<>]"] = [date("Y-m-01", $ts), date("Y-m-t", $ts)];
+        }
+
+        if(isset($params["auth_token"]) && !empty($params["auth_token"]) && isset($params["req_from_management"])){
+            $user = $this->reqInfo->getAuthAccount();
+            $params["where"]["AND"]["news.account_id"] = $user["account_id"];
         }
 
         $listResponse = ListDAO::gets($this->table, $params);
         $this->_builds($listResponse["data"]);
         return new JsonView($listResponse);
+    }
+
+    /**
+     * @GET
+     * @uri /by_year
+     */
+    public function gets_by_year(){
+        $params = $this->reqInfo->params();
+        $params["url"] = URL::absolute("/news");
+        $params["where"] = [
+            "ORDER"=> "created_at DESC"
+        ];
+
+        $date = $params["year"];
+        $ts = strtotime($date);
+
+        $db = MedooFactory::getInstance();
+        $items = $db->select("news", "*", ["AND"=> [
+            "created_at[>]"=> date("Y-01-01 00:00:00", $ts),
+            "created_at[<]"=> date("Y-12-t 23:59:59", strtotime(date("Y-12-01", $ts)))
+        ]]);
+
+        $res = [];
+        for($i=0; $i<12; $i++){
+            $res[$i] = [
+                "length"=> 0,
+                "data"=> []
+            ];
+            foreach($items as $item){
+                $m = $i+1;
+                $itemTs = strtotime($item["created_at"]);
+                $startMothTs = strtotime(date("Y-{$m}-01 00:00:00", $ts));
+                $endMothTs = strtotime(date("Y-{$m}-t 23:59:59", strtotime(date("Y-{$m}-01", $ts))));
+                if($itemTs >= $startMothTs && $itemTs <= $endMothTs){
+                    $this->_build($item, false);
+                    $res[$i]["data"][] = $item;
+                }
+            }
+            $res[$i]["length"] = count($res[$i]["data"]);
+        }
+
+        return new JsonView([
+            "length"=> count($items),
+            "data"=> $res
+        ]);
     }
 
     /**
@@ -198,6 +255,7 @@ class NewsCTL extends BaseCTL {
         $item = $db->get($this->table, "*", ["news_id"=> $id]);
         if($item) {
             $this->_build($item);
+            $db->update($this->table, ["view_count[+]"=> 1], ["news_id"=> $id]);
             return $item;
         }
         else {
@@ -211,12 +269,14 @@ class NewsCTL extends BaseCTL {
         }
     }
 
-    public function _build(&$item){
+    public function _build(&$item, $with_images = true){
         $item["news_cover_url"] = URL::absolute("/public/news_image/".$item["news_cover_path"]);
-        $db = MedooFactory::getInstance();
-        $item["news_images"] = $db->select($this->table_images, "*", ["news_id"=> $item["news_id"]]);
-        foreach($item["news_images"] as $key=> $value){
-            $item["news_images"][$key]["image_url"] = URL::absolute("/public/news_image/".$value["image_path"]);
+        if($with_images){
+            $db = MedooFactory::getInstance();
+            $item["news_images"] = $db->select($this->table_images, "*", ["news_id"=> $item["news_id"]]);
+            foreach($item["news_images"] as $key=> $value){
+                $item["news_images"][$key]["image_url"] = URL::absolute("/public/news_image/".$value["image_path"]);
+            }
         }
     }
 }

@@ -78,6 +78,26 @@ class PostCTL extends BaseCTL {
     }
 
     /**
+     * @DELETE
+     * @GET
+     * @uri /post/delete/[i:id]
+     */
+    public function delete(){
+        $id = $this->getReqInfo()->urlParam("id");
+        return $this->getService()->deletePost($id);
+    }
+
+    /**
+     * @DELETE
+     * @GET
+     * @uri /post/comment/delete/[i:id]
+     */
+    public function deleteComment(){
+        $id = $this->getReqInfo()->urlParam("id");
+        return $this->getService()->deleteComment($id);
+    }
+
+    /**
      * @POST
      * @uri /post/like/[i:id]
      */

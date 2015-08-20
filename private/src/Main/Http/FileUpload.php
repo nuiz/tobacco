@@ -119,7 +119,7 @@ class FileUpload {
 
     // function
     public function generateName($with_ext = false){
-        $name = uniqid("file");
+        $name = str_replace('.','-',uniqid('file',true));
         if($with_ext)
             $name .= ".".$this->getExt();
 

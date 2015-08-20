@@ -40,7 +40,7 @@ class KmcenterRepo {
     }
 
     public function add($params, $files){
-        $insert = ArrayHelper::filterKey(['kmcenter_name', 'kmcenter_description'], $params);
+        $insert = ArrayHelper::filterKey(['kmcenter_name', 'kmcenter_description', 'kmcenter_phone', 'kmcenter_location'], $params);
         if(!isset($files['kmcenter_map_pic'])
             || !is_array($files['kmcenter_map_pic'])
             || count($files['kmcenter_map_pic']) == 0
@@ -60,7 +60,7 @@ class KmcenterRepo {
     }
 
     public function edit($id, $params, $files){
-        $update = ArrayHelper::filterKey(['kmcenter_name', 'kmcenter_description'], $params);
+        $update = ArrayHelper::filterKey(['kmcenter_name', 'kmcenter_description', 'kmcenter_phone', 'kmcenter_location'], $params);
         if(isset($files['kmcenter_map_pic'])){
             $mapUploaded = FileUpload::load($files['kmcenter_map_pic']);
             if($mapUploaded->isUploaded()){

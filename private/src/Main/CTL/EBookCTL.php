@@ -60,6 +60,30 @@ class EBookCTL extends BaseCTL {
         return $items;
     }
 
+    /**
+     * @GET
+     * @uri /random
+     */
+    public function rand(){
+        $params = $this->reqInfo->params();
+        $items = $this->getRepo()->getsRandom($params);
+        foreach($items['data'] as $key=> $item){
+            $this->build($items['data'][$key]);
+        }
+        return $items;
+    }
+
+    /**
+     * @GET
+     * @uri /search
+     */
+    public function search(){
+        $params = $this->reqInfo->params();
+        $list = $this->getRepo()->getsSearch($params);
+        $this->builds($list['data']);
+        return $list;
+    }
+
 
     // internal function
 
@@ -77,6 +101,12 @@ class EBookCTL extends BaseCTL {
     public function build(&$item){
         $item["book_url"] = URL::absolute("/public/book/".$item["book_path"]);
         $item["book_cover_url"] = URL::absolute("/public/book_cover/".$item["book_cover_path"]);
+    }
+
+    public function builds(&$items){
+        foreach($items as $key=> $value){
+            $this->build($items[$key]);
+        }
     }
 
     /**

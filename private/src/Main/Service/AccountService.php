@@ -70,7 +70,7 @@ class AccountService extends BaseService {
     public function gets($options){
         $default = array(
             "page"=> 1,
-            "limit"=> 100
+            "limit"=> 1000
         );
         $options = array_merge($default, $options);
         $skip = ($options['page']-1)*$options['limit'];
@@ -78,6 +78,7 @@ class AccountService extends BaseService {
         $db = MedooFactory::getInstance();
         $data = $db->select($this->table,
             '*', [
+				'account_status[!]'=> 3,
                 'LIMIT'=> [$skip, $options['limit']],
                 'ORDER'=> 'account_id DESC'
             ]);

@@ -52,8 +52,6 @@ class AccountCTL extends BaseCTL {
         $params = ArrayHelper::filterKey(["username", "password", "firstname", "cluster_id"], $params);
         $params["level_id"] = 3;
 
-
-
         if($params["cluster_id"]){
 
         }
@@ -186,7 +184,13 @@ class AccountCTL extends BaseCTL {
         $user = $this->getReqInfo()->getAuthAccount();
         AccountPermission::requirePermission($user, [AccountPermission::ID_CLUSTER, AccountPermission::ID_CLUSTER_IT, AccountPermission::ID_SUPER_ADMIN]);
 
-        $id = $db->update($this->table, ["level_id"=> 4, "cluster_id"=> $user['account_id'], "upgrade_level_at"=> date("Y-m-d H:i:s")], ["account_id"=> $params["account_id"]]);
+        if($user["level_id"]==AccountPermission::ID_CLUSTER){
+            $cluster_id = $user['account_id'];
+        }
+        else if($user["level_id"]==AccountPermission::ID_CLUSTER_IT || $user["level_id"]==AccountPermission::ID_CLUSTER || $user["level_id"]==AccountPermission::ID_SUPER_ADMIN) {
+            $cluster_id = $params["cluster_id"];
+        }
+        $id = $db->update($this->table, ["level_id"=> 4, "cluster_id"=> $cluster_id, "upgrade_level_at"=> date("Y-m-d H:i:s")], ["account_id"=> $params["account_id"]]);
 
         $item = $this->_get($params["account_id"]);
         return new JsonView($item);
@@ -277,6 +281,14 @@ class AccountCTL extends BaseCTL {
 
         if(!$item){
             $item = null;
+        }
+        
+        $picPath = "public/image_users/".$item["username"].".png";
+        if(file_exists($picPath)){
+            $item["picture"] = URL::absolute("/").$picPath;
+        }
+        else {
+            $item["picture"] = URL::absolute("/")."public/images/user.jpg";
         }
 
         return new JsonView($item);
