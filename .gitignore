@@ -57,15 +57,15 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 
-public\attach_file\*
-public\book
-public\book_cover\*
+/public/attach_file/*
+/public/book/*
+/public/book_cover/*
 
-public\guru_icon\*
-public\image_users\*
+/public/guru_icon/*
+/public/image_users/*
 
-public\news_image\*
-public\post_image\*
-public\post_video\*
-public\video\*
-public\video_thumb\*
+/public/news_image/*
+/public/post_image/*
+/public/post_video/*
+/public/video/*
+/public/video_thumb/*
