@@ -73,7 +73,6 @@ class EBookCTL extends BaseCTL {
         return $items;
     }
 
-<<<<<<< HEAD
     /**
      * @GET
      * @uri /search
@@ -85,8 +84,6 @@ class EBookCTL extends BaseCTL {
         return $list;
     }
 
-=======
->>>>>>> origin/master
 
     // internal function
 

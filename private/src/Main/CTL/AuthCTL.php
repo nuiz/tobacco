@@ -10,10 +10,7 @@ namespace Main\CTL;
 use Main\DB\Medoo\MedooFactory;
 use Main\Helper\ArrayHelper;
 use Main\Helper\ResponseHelper;
-<<<<<<< HEAD
 use Main\Helper\URL;
-=======
->>>>>>> origin/master
 
 /**
  * @Restful
@@ -34,11 +31,7 @@ class AuthCTL extends BaseCTL {
         }
 
         $db = MedooFactory::getInstance();
-<<<<<<< HEAD
         $user = $db->get($this->table, "*", ["AND"=> ["username"=> $params["username"], "account_status[!]"=> 3]]);
-=======
-        $user = $db->get($this->table, "*", ["AND"=> ["username"=> $params, "account_status[!]"=> 3]]);
->>>>>>> origin/master
 
         if(!$user){
             return [
@@ -49,11 +42,7 @@ class AuthCTL extends BaseCTL {
             ];
         }
 
-<<<<<<< HEAD
         if(!$ldap_username && $user['password'] != $params['password'] && md5($user['password']) != $params["password"]){
-=======
-        if($user['password'] != $params['password'] && md5($user['password']) != $params["password"]){
->>>>>>> origin/master
             return [
                 "error"=> [
                     "code"=> 2,
@@ -87,14 +76,11 @@ class AuthCTL extends BaseCTL {
         $nfc_id = $params["nfc_id"];
 
         $db = MedooFactory::getInstance();
-<<<<<<< HEAD
         $authAccount = $this->reqInfo->getAuthAccount();
         if(!empty($authAccount)){
             return $this->registerNfc();
         }
 
-=======
->>>>>>> origin/master
         $acc = $db->get("account_nfc", "*", ["nfc_id"=> $nfc_id]);
         if(!$acc){
             return ResponseHelper::error("Auth failed nfc wrong");
@@ -110,7 +96,6 @@ class AuthCTL extends BaseCTL {
 //        unset($acc["created_at"]);
 //        unset($acc["updated_at"]);
 
-<<<<<<< HEAD
         $picPath = "public/image_users/".$acc["username"].".png";
         if(file_exists($picPath)){
             $acc["picture"] = URL::absolute("/").$picPath;
@@ -118,8 +103,6 @@ class AuthCTL extends BaseCTL {
         else {
             $acc["picture"] = URL::absolute("/")."public/images/user.jpg";
         }
-=======
->>>>>>> origin/master
         if($acc['auth_token'] == "" || is_null($acc['auth_token'])){
             $token = $this->_generateToken($acc['account_id']);
             $db->update($this->table, ["auth_token"=> $token], ["account_id"=> $acc["account_id"]]);
@@ -139,7 +122,6 @@ class AuthCTL extends BaseCTL {
         return $acc;
     }
 
-<<<<<<< HEAD
     public function registerNfc(){
         $params  = $this->getReqInfo()->params();
         $nfc_id = $params["nfc_id"];
@@ -170,7 +152,7 @@ class AuthCTL extends BaseCTL {
         $ldap_url = "tobacco.or.th";
         $ldap_domain = "tobacco.or.th";
         $ldap_dn = "DC=tobacco,DC=or,DC=th";
-        
+
         $ldap = ldap_connect($ldap_url);
 
         $ldaprdn = $username . "@" . $ldap_domain;
@@ -202,8 +184,6 @@ class AuthCTL extends BaseCTL {
     }
 
 
-=======
->>>>>>> origin/master
     public function _generateToken($account_id){
         return md5(uniqid($account_id, true));
     }

@@ -52,13 +52,12 @@ class EBookRepo {
         return $listResponse;
     }
 
-<<<<<<< HEAD
     public function getsSearch($params){
         $keyword = $params["keyword"];
         $jKeyword = trim(json_encode($keyword), '"');
         $sql = "SELECT * FROM content_book LEFT JOIN content ON content_book.content_id=content.content_id";
         $sql .= " WHERE (content.content_name LIKE ?";
-        $sql .= " OR content_book.book_author LIKE ?"; 
+        $sql .= " OR content_book.book_author LIKE ?";
         $sql .= " OR content_book.book_places LIKE ?)";
         $sql .= " AND content.content_type = 'book'";
         $sql .= " ORDER BY content.content_id DESC";
@@ -87,8 +86,6 @@ class EBookRepo {
         ];
     }
 
-=======
->>>>>>> origin/master
     public function getByTypeId($typeId){
         $params["url"] = URL::absolute("/ebook?book_type_id=".$typeId);
         $params["field"] = "*";
